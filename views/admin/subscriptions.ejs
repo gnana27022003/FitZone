@@ -1,0 +1,48 @@
+<%- include('header', { page: 'subs' }) %>
+
+<main class="admin-page-container">
+    <div class="flex justify-between items-start section-header">
+        <div>
+            <h1 class="brand-font text-6xl tracking-tight text-white uppercase">Subscribers</h1>
+            <p class="text-muted text-sm tracking-wide uppercase">Monitor Live Transformations</p>
+        </div>
+        <div class="flex gap-4">
+            <select class="admin-input py-2 text-xs" style="width: auto;">
+                <option>All Tiers</option>
+                <option>Pro Only</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 pb-20">
+        <div class="glass-card relative overflow-hidden group p-8">
+            <div class="absolute -right-4 -bottom-4 text-9xl opacity-5 group-hover:opacity-10 transition-opacity">⚡</div>
+            
+            <div class="flex justify-between items-start mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center border border-accent/30 font-bold text-accent">FZ</div>
+                    <div>
+                        <h4 class="font-bold text-white text-base">Arjun Mehta</h4>
+                        <p class="text-[10px] text-muted tracking-widest">ID: #88291</p>
+                    </div>
+                </div>
+                <span class="badge badge-blue">PRO PLAN</span>
+            </div>
+
+            <div class="space-y-4 mb-8">
+                <div class="flex justify-between text-xs">
+                    <span class="text-muted uppercase">Payment Status</span>
+                    <span class="text-accent-green font-bold uppercase">Successful</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-muted uppercase">Renewal Date</span>
+                    <span class="text-white font-medium">Apr 28, 2026</span>
+                </div>
+            </div>
+
+            <button class="btn-action btn-edit w-full py-3">View Full Profile</button>
+        </div>
+        </div>
+</main>
+
+<%- include('footer') %>

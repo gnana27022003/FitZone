@@ -1,0 +1,50 @@
+<%- include('header', { page: 'dashboard' }) %>
+
+<main class="admin-page-container">
+    <div class="flex justify-between items-start section-header">
+        <div>
+            <h1 class="brand-font text-6xl tracking-tight text-white uppercase">System Overview</h1>
+            <p class="text-muted text-sm tracking-wide uppercase">Real-time FitZone Network Performance</p>
+        </div>
+        <div class="badge badge-green mt-2">Server Status: Online</div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Total Revenue</p>
+            <h2 class="counter-num brand-font text-5xl text-accent" data-target="842000">0</h2>
+        </div>
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Active Legends</p>
+            <h2 class="counter-num brand-font text-5xl text-accent" data-target="1240">0</h2>
+        </div>
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Total Cities</p>
+            <h2 class="counter-num brand-font text-5xl text-accent" data-target="28">0</h2>
+        </div>
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Network Load</p>
+            <h2 class="brand-font text-5xl text-accent-green uppercase">Stable</h2>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <a href="/admin/plans" class="glass-card p-10 text-center hover:border-accent transition-all group no-underline">
+            <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">💳</div>
+            <h3 class="condensed text-2xl text-white">PLAN CONFIG</h3>
+            <p class="text-xs text-muted mt-2 uppercase tracking-widest">Adjust Pricing & Tiers</p>
+        </a>
+        <a href="/admin/locations" class="glass-card p-10 text-center hover:border-accent transition-all group no-underline">
+            <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">📍</div>
+            <h3 class="condensed text-2xl text-white">LOCATIONS</h3>
+            <p class="text-xs text-muted mt-2 uppercase tracking-widest">Branch Operations</p>
+        </a>
+        <a href="/admin/subscriptions" class="glass-card p-10 text-center hover:border-accent transition-all group no-underline">
+            <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">📋</div>
+            <h3 class="condensed text-2xl text-white">LOGS</h3>
+            <p class="text-xs text-muted mt-2 uppercase tracking-widest">Subscriber Data</p>
+        </a>
+    </div>
+</main>
+
+<%- include('footer') %>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fitzone — Sign Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/signup.css">
+
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Main content -->
+  <div class="page-wrap">
+
+    <!-- Brand header -->
+    <div class="brand-header">
+      <div class="brand-logo">
+        <span class="bolt">⚡</span>
+        <span class="brand-name">Fitzone</span>
+      </div>
+      <div class="brand-tagline">Find gyms <span>near you</span> · Subscribe instantly</div>
+    </div>
+
+    <!-- Signup card -->
+    <div class="login-container">
+
+      <!-- Card header -->
+      <div class="login-header">
+        <div class="login-icon">🏋️</div>
+        <h1>Create Your Account</h1>
+        <p>Join thousands training smarter with Fitzone</p>
+      </div>
+
+      <!-- Success flash -->
+      <div class="success-message" id="successMessage">
+        🎉 Account created! Welcome to Fitzone. Redirecting…
+      </div>
+
+      <form id="signupForm" method="post" action="/signup">
+
+        <!-- ── Full Name ───────────────────────────── -->
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🧑</span>
+            <input type="text" id="fullName" name="fullName"
+              placeholder="Your full name" autocomplete="name" />
+          </div>
+          <div class="error-message" id="nameError"></div>
+        </div>
+
+        <!-- ── Email + Verify ─────────────────────── -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper has-verify" id="emailWrapper">
+            <span class="input-icon">📧</span>
+            <input type="email" id="email" name="email"
+              placeholder="you@example.com" autocomplete="email" />
+            <button type="button" class="verify-btn" id="emailVerifyBtn"
+              onclick="sendOtp('email')">Verify</button>
+          </div>
+          <!-- OTP slide-down -->
+          <div class="otp-section" id="emailOtpSection">
+            <div class="otp-inner">
+              <input type="text" id="emailOtp" maxlength="6"
+                placeholder="• • • • • •" inputmode="numeric" />
+              <button type="button" class="otp-submit-btn"
+                onclick="verifyOtp('email')">Confirm</button>
+            </div>
+          </div>
+          <!-- Verification status -->
+          <div class="verify-status" id="emailStatus"></div>
+          <div class="error-message" id="emailError"></div>
+        </div>
+
+        
+
+        <!-- ── Create Password ────────────────────── -->
+        <div class="form-group">
+          <label for="password">Create Password</label>
+          <div class="input-wrapper" id="passwordWrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="password" name="password"
+              placeholder="Minimum 8 characters" autocomplete="new-password" />
+            <span class="password-toggle" id="passwordToggle"
+              title="Toggle visibility">👁️</span>
+          </div>
+          <!-- Strength meter -->
+          <div class="tw-mt-2" id="strengthMeter" style="display:none">
+            <div style="
+              height:4px; border-radius:4px;
+              background: rgba(255,255,255,0.07);
+              overflow:hidden;
+            ">
+              <div id="strengthBar" style="
+                height:100%; width:0%; border-radius:4px;
+                transition: width 0.4s ease, background 0.4s ease;
+              "></div>
+            </div>
+            <span id="strengthLabel" style="
+              font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase;
+              margin-top:0.3rem; display:block; color:var(--text-muted);
+            "></span>
+          </div>
+          <div class="error-message" id="passwordError"></div>
+        </div>
+
+        <!-- ── Submit ──────────────────────────────── -->
+        <button type="submit" class="login-button"  id="signupButton" style="margin-top:0.4rem">
+          <span>🚀 Start Your Fitness Journey</span>
+        </button>
+
+      </form>
+
+      <!-- Divider + social -->
+      <div class="divider"><span>or sign up with</span></div>
+      <div class="social-login">
+        <button class="social-button" title="Continue with Google">🌐</button>
+        <button class="social-button" title="Continue with Facebook">📘</button>
+        <button class="social-button" title="Continue with Apple">🍎</button>
+      </div>
+
+      <div class="signup-link">
+        Already a member? <a href="/login">Log in here</a>
+      </div>
+    </div><!-- /.login-container -->
+
+    <!-- Trust perks -->
+    <div class="perks-bar">
+      <div class="perk"><span class="icon">🔒</span> Secure & Private</div>
+      <div class="perk"><span class="icon">⚡</span> Instant Access</div>
+      <div class="perk"><span class="icon">🏙️</span> 500+ Gyms Nearby</div>
+    </div>
+
+  </div><!-- /.page-wrap -->
+
+  <script>
+  /**
+   * ─────────────────────────────────────────────────────────────────
+   *  Fitzone Signup — Frontend State & Verification Logic
+   *  All verification is simulated on the frontend (demo mode).
+   *  In production, replace simulateBackend() with real fetch() calls
+   *  to /api/send-otp and /api/verify-otp.
+   * ─────────────────────────────────────────────────────────────────
+   */
+
+  // ── State object ───────────────────────────────────────────────────
+  const state = {
+    email: { otpSent: false, verified: false, otp: null }
+  };
+
+  
+  // ── Send OTP ───────────────────────────────────────────────────────
+
+  async function sendOtp(field) {
+  const val = document.getElementById(field).value.trim();
+  const errorEl = document.getElementById(`${field}Error`);
+  const btn = document.getElementById(`${field}VerifyBtn`);
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+
+  if (!val) {
+    showError(errorEl, `Please enter ${field}`);
+    return;
+  }
+
+  // ✅ OPEN UI IMMEDIATELY (no waiting)
+  document.getElementById(`${field}OtpSection`).classList.add('open');
+  showStatus(document.getElementById(`${field}Status`), 'loading', 'Sending OTP...');
+
+  try {
+    const res = await fetch('/generate-email-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [field]: val })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showStatus(document.getElementById(`${field}Status`), 'fail', data.message);
+      return;
+    }
+
+    // ✅ success update
+    showStatus(document.getElementById(`${field}Status`), 'success', 'OTP sent');
+
+  } catch (err) {
+    showStatus(document.getElementById(`${field}Status`), 'fail', 'Server error');
+  }
+}
+  // ── Verify OTP ─────────────────────────────────────────────────────
+  async function verifyOtp(field) {
+  const otp = document.getElementById(`${field}Otp`).value.trim();
+  const val = document.getElementById(field).value.trim();
+
+  const statusEl = document.getElementById(`${field}Status`);
+  const errorEl = document.getElementById(`${field}Error`);
+  const wrapEl = document.getElementById(`${field}Wrapper`);
+
+  if (!otp) {
+    showError(errorEl, "Please enter OTP");
+    return;
+  }
+
+  try {
+    const endpoint =  '/verify-email'
+      
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [field]: val, otp })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showStatus(statusEl, 'fail', data.message);
+      wrapEl.classList.add('error');
+      return;
+    }
+
+    
+  showStatus(statusEl, 'success', data.message);
+
+
+  state[field].verified = true;
+
+  
+  wrapEl.classList.add('verified');
+  wrapEl.classList.remove('error');
+
+  // ❌ hide OTP section
+  document.getElementById(`${field}OtpSection`).classList.remove('open');
+
+  // ❌ disable verify button (prevents re-click spam)
+  document.getElementById(`${field}VerifyBtn`).disabled = true;
+  document.getElementById(`${field}VerifyBtn`).textContent = "Verified ✅";
+
+  } catch (err) {
+    showError(errorEl, 'Server error');
+  }
+}
+  // ── Password toggle ────────────────────────────────────────────────
+  document.getElementById('passwordToggle').addEventListener('click', function () {
+    const pwd = document.getElementById('password');
+    const isVisible = pwd.type === 'text';
+    pwd.type = isVisible ? 'password' : 'text';
+    this.textContent = isVisible ? '👁️' : '🙈';
+  });
+
+  // ── Password strength meter ────────────────────────────────────────
+  document.getElementById('password').addEventListener('input', function () {
+    const val = this.value;
+    const meter = document.getElementById('strengthMeter');
+    const bar   = document.getElementById('strengthBar');
+    const label = document.getElementById('strengthLabel');
+
+    if (!val) { meter.style.display = 'none'; return; }
+    meter.style.display = 'block';
+
+    let score = 0;
+    if (val.length >= 8)  score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const levels = [
+      { pct: '20%', color: '#ff3b3b', text: 'Weak' },
+      { pct: '45%', color: '#ff9800', text: 'Fair' },
+      { pct: '70%', color: '#f5d000', text: 'Good' },
+      { pct: '100%', color: 'var(--accent-green)', text: 'Strong 💪' },
+    ];
+    const lvl = levels[score - 1] || levels[0];
+    bar.style.width = lvl.pct;
+    bar.style.background = lvl.color;
+    label.textContent = lvl.text;
+    label.style.color = lvl.color;
+  });
+
+  // ── Form submit ────────────────────────────────────────────────────
+  document.getElementById('signupForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    let valid = true;
+
+    // Name
+    const name = document.getElementById('fullName').value.trim();
+    if (!name) { showError(document.getElementById('nameError'), 'Name is required'); valid = false; }
+    else clearError(document.getElementById('nameError'));
+
+    // Email
+    if (!state.email.verified) {
+      showError(document.getElementById('emailError'), 'Please verify your email first'); valid = false;
+    }
+    
+    
+    // Password
+    const pwd = document.getElementById('password').value;
+    if (pwd.length < 8) {
+      showError(document.getElementById('passwordError'), 'Password must be at least 8 characters'); valid = false;
+    } else clearError(document.getElementById('passwordError'));
+
+    if (!valid) return;
+
+    // Submit
+    const btn = document.getElementById('signupButton');
+    btn.disabled = true;
+    btn.querySelector('span').textContent = '⏳ Creating account…';
+
+    // Simulate API call
+    await new Promise(r => setTimeout(r, 1200));
+
+    // Show success
+    const msg = document.getElementById('successMessage');
+    msg.classList.add('show');
+    btn.querySelector('span').textContent = '✓ Account Created!';
+    btn.style.background = 'linear-gradient(135deg, var(--accent-green), #00a854)';
+
+    // Redirect after delay (replace with real redirect)
+    setTimeout(() => { alert('Demo: Redirecting to dashboard…'); }, 2000);
+  });
+
+  // ── Helpers ────────────────────────────────────────────────────────
+  function showError(el, msg) { el.textContent = msg; }
+  function clearError(el) { el.textContent = ''; }
+
+  function showStatus(el, type, msg) {
+    el.className = `verify-status show ${type}`;
+    el.textContent = msg;
+  }
+  function hideStatus(el) {
+    el.className = 'verify-status';
+    el.textContent = '';
+  }
+  </script>
+
+</body>
+</html>

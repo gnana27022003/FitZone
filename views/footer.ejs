@@ -1,0 +1,106 @@
+<footer class="py-12 border-t border-[var(--border-glass)] relative z-10 bg-[#05080eef] backdrop-blur-md">
+  <div class="section-wrap">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-10">
+
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="text-2xl" style="filter:drop-shadow(0 0 10px var(--accent));">⚡</span>
+          <span class="brand-font text-3xl tracking-wider bg-gradient-to-r from-white to-accent bg-clip-text text-transparent">FitZone</span>
+        </div>
+        <p class="text-sm text-[var(--text-muted)] leading-relaxed max-w-sm mb-6">
+          India's largest premium gym network. 500+ locations, 24/7 access, and world-class trainers. Join the elite 1% today.
+        </p>
+        <div class="flex gap-4">
+          <a href="#" class="social-icon">📸</a>
+          <a href="#" class="social-icon">🐦</a>
+          <a href="#" class="social-icon">▶️</a>
+          <a href="#" class="social-icon">💬</a>
+        </div>
+      </div>
+
+      <div>
+        <p class="condensed text-xs font-bold tracking-[0.2em] text-[var(--text-muted)] uppercase mb-6">Explore</p>
+        <ul class="flex flex-col gap-4 text-sm">
+          <li><a href="/" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Home</a></li>
+          <li><a href="/locations" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Locations</a></li>
+          <li><a href="/plans" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Membership Plans</a></li>
+          <li><a href="/about" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Our Story</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="condensed text-xs font-bold tracking-[0.2em] text-[var(--text-muted)] uppercase mb-6">Support</p>
+        <ul class="flex flex-col gap-4 text-sm">
+          <li><a href="/contact" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Help Center</a></li>
+          <li><a href="#" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Privacy Policy</a></li>
+          <li><a href="#" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Terms of Service</a></li>
+          <li><a href="#" class="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors">Refund Policy</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="pt-8 border-t border-[var(--border-glass)] flex flex-wrap justify-between items-center gap-6">
+      <p class="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
+        © 2026 FitZone Technologies Pvt. Ltd. All rights reserved.
+      </p>
+      <div class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
+        Built with <span class="text-[var(--accent-hot)]">❤️</span> in Hyderabad, India
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 1. Intersection Observer for Scroll Reveals
+  const revealOptions = { threshold: 0.15, rootMargin: '0px 0px -50px 0px' };
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target); // Only animate once
+      }
+    });
+  }, revealOptions);
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => revealObserver.observe(el));
+
+  // 2. Performance Counter Animation
+  function animateValue(obj, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const val = Math.floor(progress * (end - start) + start);
+      obj.innerHTML = val >= 1000 ? (val / 1000).toFixed(0) + 'K+' : val + '+';
+      if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        const target = parseInt(entry.target.getAttribute('data-target'));
+        animateValue(entry.target, 0, target, 2000);
+        entry.target.dataset.animated = true;
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.counter-num').forEach(num => counterObserver.observe(num));
+
+  // 3. Smooth Scroll for Anchor Links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

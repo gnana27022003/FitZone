@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FitZone | Forge Your Legend</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --bg-base: #080b10;
+            --bg-card: rgba(12,18,28,0.82);
+            --border-glass: rgba(0,180,255,0.12);
+            --accent: #00b4ff;
+            --accent-hot: #ff4d00;
+            --text-primary: #e8f2ff;
+            --text-muted: #5e7a99;
+            --transition: 0.28s cubic-bezier(.4,0,.2,1);
+        }
+
+        body { font-family: 'Barlow', sans-serif; background: var(--bg-base); color: var(--text-primary); overflow-x: hidden; }
+        .brand-font { font-family: 'Bebas Neue', sans-serif; }
+        .condensed { font-family: 'Barlow Condensed', sans-serif; }
+
+        /* ── DYNAMIC NAVBAR ── */
+        #navbar { 
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000; 
+            padding: 1.5rem 0; transition: all 0.4s ease; 
+        }
+        #navbar.scrolled { 
+            background: rgba(8, 11, 16, 0.85); 
+            backdrop-filter: blur(20px); 
+            padding: 0.8rem 0; 
+            border-bottom: 1px solid var(--border-glass); 
+        }
+
+        .nav-link { 
+            font-family: 'Barlow Condensed', sans-serif; 
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em; 
+            text-transform: uppercase; color: var(--text-muted); 
+            position: relative; transition: color var(--transition); 
+        }
+        /* The interactivity you liked: Blue + Underline */
+        .nav-link:hover, .nav-link.active { color: var(--accent); }
+        .nav-link::after { 
+            content: ''; position: absolute; bottom: -4px; left: 0; 
+            width: 0; height: 2px; background: var(--accent); 
+            transition: width 0.3s ease; 
+        }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+        /* ── VIDEO HERO ENGINE (Home Only) ── */
+        .video-hero-container { 
+            position: relative; height: 100vh; width: 100%; 
+            display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; 
+        }
+       
+        
+
+        /* ── GLOBAL COMPONENTS ── */
+        .btn-nav { 
+            background: linear-gradient(135deg, #0066cc, var(--accent)); 
+            padding: 0.6rem 1.4rem; border-radius: 10px; 
+            font-family: 'Barlow Condensed', sans-serif; 
+            font-weight: 800; font-size: 0.8rem; text-transform: uppercase; 
+            color: white; transition: all 0.3s ease; 
+        }
+        .btn-nav:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 180, 255, 0.4); }
+
+        .bg-mesh { position: fixed; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(ellipse 80% 60% at 20% 10%,rgba(0,100,220,0.13) 0%,transparent 70%), radial-gradient(ellipse 60% 50% at 80% 80%,rgba(255,77,0,0.09) 0%,transparent 70%); }
+        .bg-grid { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-image: linear-gradient(rgba(0,180,255,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(0,180,255,0.04) 1px,transparent 1px); background-size: 48px 48px; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+
+<nav id="navbar">
+    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <a href="/" class="flex items-center gap-3">
+            <span class="text-2xl">⚡</span>
+            <span class="brand-font text-2xl tracking-widest bg-gradient-to-r from-white to-accent bg-clip-text text-transparent">FITZONE</span>
+        </a>
+        
+        <div class="hidden lg:flex gap-10">
+            <a href="/" class="nav-link <%= typeof page !== 'undefined' && page === 'home' ? 'active' : '' %>">Home</a>
+            <a href="/locations" class="nav-link <%= typeof page !== 'undefined' && page === 'locations' ? 'active' : '' %>">Locations</a>
+            <a href="/plans" class="nav-link <%= typeof page !== 'undefined' && page === 'plans' ? 'active' : '' %>">Plans</a>
+            <a href="/profile" class="nav-link <%= typeof page !== 'undefined' && page === 'profile' ? 'active' : '' %>">Dashboard</a>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <a href="/cart" class="text-xl hover:text-accent transition-colors relative">🛒</a>
+            <a href="/signup" class="btn-nav"><span>Join Now</span></a>
+        </div>
+    </div>
+</nav>
+
+<% if (typeof page !== 'undefined' && page === 'home') { %>
+
+<% } else { %>
+    <div class="pt-32"></div>
+<% } %>
+
+<script>
+    // Scroll state for navbar
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Forced Video Playback (Autoplay fix)
+    window.addEventListener('load', () => {
+        const video = document.getElementById('bgVideo');
+        if (video) {
+            video.play().catch(err => console.error("Autoplay blocked. User interaction required."));
+        }
+    });
+</script>

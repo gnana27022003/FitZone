@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fitzone — Forgot Password</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/forgotpass.css">
+
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="page-wrap">
+
+    <!-- Brand -->
+    <div class="brand-header">
+      <div class="brand-logo">
+        <span class="bolt">⚡</span>
+        <span class="brand-name">Fitzone</span>
+      </div>
+      <div class="brand-tagline">Find gyms <span>near you</span> · Subscribe instantly</div>
+    </div>
+
+    <!-- Card -->
+    <div class="login-container">
+
+      <div class="login-header">
+        <div class="login-icon" id="cardIcon">🔑</div>
+        <h1 id="cardTitle">Forgot Password?</h1>
+        <p id="cardSubtitle">No worries — enter your registered email and<br>we'll send you a verification code.</p>
+      </div>
+
+      <!-- Success flash (shown after password reset) -->
+      <div class="success-message" id="successMessage">
+        🎉 Password reset successfully! Redirecting to login…
+      </div>
+
+      <!-- ── Step 1 : Email + OTP ─────────────────────── -->
+      <div id="step1">
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper has-verify" id="emailWrapper">
+            <span class="input-icon">📧</span>
+            <input type="email" id="email" name="email"
+              placeholder="you@example.com" autocomplete="email" />
+            <button type="button" class="verify-btn" id="emailVerifyBtn"
+              onclick="sendOtp()">Verify</button>
+          </div>
+
+          <!-- OTP slide-down -->
+          <div class="otp-section" id="emailOtpSection">
+            <div class="otp-inner">
+              <input type="text" id="emailOtp" maxlength="6"
+                placeholder="• • • • • •" inputmode="numeric" />
+              <button type="button" class="otp-submit-btn" id="otpConfirmBtn"
+                onclick="verifyOtp()">Confirm</button>
+            </div>
+          </div>
+
+          <!-- Verification status -->
+          <div class="verify-status" id="emailStatus"></div>
+          <div class="error-message" id="emailError"></div>
+        </div>
+
+      </div>
+      <!-- /step1 -->
+
+      <!-- ── Step 2 : Reset Password (slides in after verify) ── -->
+      <div class="reset-section" id="resetSection">
+
+        <div class="reset-divider"><span>🔐 Set your new password</span></div>
+
+        <!-- New Password -->
+        <div class="form-group" style="margin-bottom:1rem">
+          <label for="newPassword">New Password</label>
+          <div class="input-wrapper" id="newPassWrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="newPassword"
+              placeholder="Minimum 8 characters" autocomplete="new-password" />
+            <span class="password-toggle" id="newPassToggle" title="Toggle visibility">👁️</span>
+          </div>
+          <!-- Strength meter -->
+          <div id="strengthMeter" style="display:none; margin-top:0.5rem">
+            <div style="height:4px;border-radius:4px;background:rgba(255,255,255,0.07);overflow:hidden">
+              <div id="strengthBar" style="height:100%;width:0%;border-radius:4px;transition:width 0.4s ease,background 0.4s ease;"></div>
+            </div>
+            <span id="strengthLabel" style="font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase;margin-top:0.3rem;display:block;color:var(--text-muted);"></span>
+          </div>
+          <div class="error-message" id="newPassError"></div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group" style="margin-bottom:1.2rem">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="confirmPassword"
+              placeholder="Re-enter your password" autocomplete="new-password" />
+            <span class="password-toggle" id="confirmPassToggle" title="Toggle visibility">👁️</span>
+          </div>
+          <div class="error-message" id="confirmPassError"></div>
+        </div>
+
+        <!-- Reset button -->
+        <button type="button" class="login-button" id="resetBtn" onclick="resetPassword()">
+          <span>🔄 Reset Password</span>
+        </button>
+
+      </div>
+      <!-- /resetSection -->
+
+      <div class="signup-link">
+        Remembered it? <a href="/login">Back to Login</a>
+      </div>
+
+    </div><!-- /.login-container -->
+
+    <!-- Perks -->
+    <div class="perks-bar">
+      <div class="perk"><span class="icon">🔒</span> Secure & Private</div>
+      <div class="perk"><span class="icon">⚡</span> Instant Access</div>
+      <div class="perk"><span class="icon">🏙️</span> 500+ Gyms Nearby</div>
+    </div>
+
+  </div><!-- /.page-wrap -->
+
+  <script>
+  /**
+   * ─────────────────────────────────────────────────────────────────
+   *  Fitzone — Forgot Password Frontend Logic
+   *
+   *  Flow:
+   *   1. User enters email → clicks Verify → OTP section slides down
+   *   2. User enters 6-digit code → clicks Confirm
+   *      ✅ Correct → OTP section hides, email field locks (verified border),
+   *                   Reset Password section slides in, card header updates
+   *      ❌ Wrong   → shake animation, "Invalid code" status shown
+   *   3. User sets new password → clicks Reset Password → success flash
+   *
+   *  Backend: Replace simulateBackend() with real fetch() calls to
+   *           POST /api/send-otp  and  POST /api/verify-otp
+   * ─────────────────────────────────────────────────────────────────
+   */
+
+  // ── State ──────────────────────────────────────────────────────────
+  const state = {
+    otpSent:   false,
+    verified:  false,
+    storedOtp: null,   // demo only — real backend holds this server-side
+  };
+
+  // ── Simulated backend (replace with real fetch in production) ──────
+  async function simulateBackend(endpoint, payload) {
+    await new Promise(r => setTimeout(r, 900));
+
+    if (endpoint === '/api/send-otp') {
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      console.log(`[DEMO] OTP for ${payload.email}: ${otp}`);
+      return { success: true, otp };
+    }
+    if (endpoint === '/api/verify-otp') {
+      return { success: payload.code === state.storedOtp };
+    }
+    if (endpoint === '/api/reset-password') {
+      return { success: true };
+    }
+  }
+
+  // ── Step 1a : Send OTP ─────────────────────────────────────────────
+  async function sendOtp() {
+    const emailEl  = document.getElementById('email');
+    const btnEl    = document.getElementById('emailVerifyBtn');
+    const otpSec   = document.getElementById('emailOtpSection');
+    const statusEl = document.getElementById('emailStatus');
+    const errorEl  = document.getElementById('emailError');
+    const wrapEl   = document.getElementById('emailWrapper');
+
+    const email = emailEl.value.trim();
+
+    // Validate email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errorEl.textContent = 'Enter a valid email address';
+      return;
+    }
+    errorEl.textContent = '';
+
+    // Loading
+    btnEl.disabled = true;
+    btnEl.textContent = '⏳';
+
+    try {
+      // ↓ Replace with: fetch('/api/send-otp', { method:'POST', body: JSON.stringify({email}) … })
+      const data = await simulateBackend('/api/send-otp', { email });
+
+      if (data.success) {
+        state.storedOtp = data.otp;   // demo only
+        state.otpSent   = true;
+
+        // Slide down OTP box
+        otpSec.classList.add('open');
+        setTimeout(() => document.getElementById('emailOtp').focus(), 380);
+
+        // Resend button
+        btnEl.textContent = 'Resend';
+        btnEl.disabled    = false;
+
+        // Clear old status
+        statusEl.className = 'verify-status';
+        statusEl.textContent = '';
+        wrapEl.classList.remove('verified', 'error');
+      }
+    } catch (err) {
+      btnEl.textContent = 'Verify';
+      btnEl.disabled = false;
+      errorEl.textContent = 'Could not send OTP. Try again.';
+    }
+  }
+
+  // ── Step 1b : Verify OTP ───────────────────────────────────────────
+  async function verifyOtp() {
+    const otpInput    = document.getElementById('emailOtp');
+    const confirmBtn  = document.getElementById('otpConfirmBtn');
+    const statusEl    = document.getElementById('emailStatus');
+    const otpSec      = document.getElementById('emailOtpSection');
+    const wrapEl      = document.getElementById('emailWrapper');
+    const verifyBtn   = document.getElementById('emailVerifyBtn');
+
+    const code = otpInput.value.trim();
+    if (code.length < 4) {
+      otpInput.style.animation = 'none';
+      otpInput.offsetHeight;
+      otpInput.style.animation = 'shake 0.4s ease';
+      return;
+    }
+
+    // Loading
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = '⏳';
+
+    try {
+      // ↓ Replace with: fetch('/api/verify-otp', { method:'POST', body: JSON.stringify({code}) … })
+      const data = await simulateBackend('/api/verify-otp', { code });
+
+      if (data.success) {
+        // ── ✅ Verified ───────────────────────────────────────────────
+        state.verified = true;
+
+        // Status badge
+        statusEl.className   = 'verify-status show success';
+        statusEl.textContent = '✅ Email verified successfully';
+
+        // Close OTP box
+        otpSec.classList.remove('open');
+
+        // Green border, lock email field
+        wrapEl.classList.add('verified');
+        wrapEl.classList.remove('error');
+        document.getElementById('email').disabled = true;
+
+        // Lock verify button
+        verifyBtn.disabled     = true;
+        verifyBtn.textContent  = '✓';
+        verifyBtn.style.color  = 'var(--accent-green)';
+
+        // Update card header
+        document.getElementById('cardIcon').textContent    = '🔐';
+        document.getElementById('cardTitle').textContent   = 'Reset Your Password';
+        document.getElementById('cardSubtitle').textContent = 'Email verified! Choose a strong new password below.';
+
+        // Slide in reset password section after a short pause
+        setTimeout(() => {
+          document.getElementById('resetSection').classList.add('open');
+        }, 400);
+
+      } else {
+        // ── ❌ Wrong code ─────────────────────────────────────────────
+        state.verified = false;
+
+        statusEl.className   = 'verify-status show fail';
+        statusEl.textContent = '❌ Invalid code — please try again';
+
+        wrapEl.classList.add('error');
+        wrapEl.classList.remove('verified');
+
+        // Shake OTP input
+        otpInput.style.animation = 'none';
+        otpInput.offsetHeight;
+        otpInput.style.animation = 'shake 0.4s ease';
+
+        confirmBtn.disabled    = false;
+        confirmBtn.textContent = 'Confirm';
+      }
+    } catch (err) {
+      confirmBtn.disabled    = false;
+      confirmBtn.textContent = 'Confirm';
+    }
+  }
+
+  // ── Step 2 : Reset Password ────────────────────────────────────────
+  async function resetPassword() {
+    const newPass     = document.getElementById('newPassword').value;
+    const confirmPass = document.getElementById('confirmPassword').value;
+    const newErr      = document.getElementById('newPassError');
+    const confirmErr  = document.getElementById('confirmPassError');
+    const btn         = document.getElementById('resetBtn');
+    let valid = true;
+
+    if (newPass.length < 8) {
+      newErr.textContent = 'Password must be at least 8 characters';
+      valid = false;
+    } else { newErr.textContent = ''; }
+
+    if (confirmPass !== newPass) {
+      confirmErr.textContent = 'Passwords do not match';
+      valid = false;
+    } else { confirmErr.textContent = ''; }
+
+    if (!valid) return;
+
+    // Loading
+    btn.disabled = true;
+    btn.querySelector('span').textContent = '⏳ Resetting…';
+
+    try {
+      // ↓ Replace with: fetch('/api/reset-password', { method:'POST', body: JSON.stringify({password: newPass}) … })
+      const data = await simulateBackend('/api/reset-password', { password: newPass });
+
+      if (data.success) {
+        document.getElementById('successMessage').classList.add('show');
+        btn.querySelector('span').textContent = '✓ Password Reset!';
+        btn.style.background = 'linear-gradient(135deg, var(--accent-green), #00a854)';
+
+        // Redirect after delay
+        setTimeout(() => { alert('Demo: Redirecting to login…'); }, 2000);
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.querySelector('span').textContent = '🔄 Reset Password';
+    }
+  }
+
+  // ── Password toggles ───────────────────────────────────────────────
+  document.getElementById('newPassToggle').addEventListener('click', function () {
+    const f = document.getElementById('newPassword');
+    const v = f.type === 'text';
+    f.type = v ? 'password' : 'text';
+    this.textContent = v ? '👁️' : '🙈';
+  });
+  document.getElementById('confirmPassToggle').addEventListener('click', function () {
+    const f = document.getElementById('confirmPassword');
+    const v = f.type === 'text';
+    f.type = v ? 'password' : 'text';
+    this.textContent = v ? '👁️' : '🙈';
+  });
+
+  // ── Password strength meter ────────────────────────────────────────
+  document.getElementById('newPassword').addEventListener('input', function () {
+    const val    = this.value;
+    const meter  = document.getElementById('strengthMeter');
+    const bar    = document.getElementById('strengthBar');
+    const label  = document.getElementById('strengthLabel');
+
+    if (!val) { meter.style.display = 'none'; return; }
+    meter.style.display = 'block';
+
+    let score = 0;
+    if (val.length >= 8)          score++;
+    if (/[A-Z]/.test(val))        score++;
+    if (/[0-9]/.test(val))        score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const levels = [
+      { pct: '20%',  color: '#ff3b3b', text: 'Weak' },
+      { pct: '45%',  color: '#ff9800', text: 'Fair' },
+      { pct: '70%',  color: '#f5d000', text: 'Good' },
+      { pct: '100%', color: 'var(--accent-green)', text: 'Strong 💪' },
+    ];
+    const lvl = levels[score - 1] || levels[0];
+    bar.style.width      = lvl.pct;
+    bar.style.background = lvl.color;
+    label.textContent    = lvl.text;
+    label.style.color    = lvl.color;
+  });
+  </script>
+
+</body>
+</html>

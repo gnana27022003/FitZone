@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fitzone — Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/login.css">
+ 
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="page-wrap">
+
+    <!-- Brand -->
+    <div class="brand-header">
+      <div class="brand-logo">
+        <span class="bolt">⚡</span>
+        <span class="brand-name">Fitzone</span>
+      </div>
+      <div class="brand-tagline">Find gyms <span>near you</span> · Subscribe instantly</div>
+    </div>
+
+    <!-- Card -->
+    <div class="login-container">
+
+      <div class="login-header">
+        <div class="login-icon">🔐</div>
+        <h1>Welcome Back</h1>
+        <p>Log in to continue your fitness journey</p>
+      </div>
+
+      <!-- Success flash -->
+      <div class="success-message" id="successMessage">
+        🎉 Login successful! Redirecting to your dashboard…
+      </div>
+
+      <form id="loginForm" method="post" action="/login" >
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📧</span>
+            <input type="email" id="email" name="email"
+              placeholder="you@example.com" autocomplete="email" />
+          </div>
+          <div class="error-message" id="emailError"></div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="password" name="password"
+              placeholder="Enter your password" autocomplete="current-password" />
+            <span class="password-toggle" id="passwordToggle" title="Toggle visibility">👁️</span>
+          </div>
+          <div class="error-message" id="passwordError"></div>
+        </div>
+
+        <!-- Remember me + Forgot -->
+        <div class="form-options">
+          <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember" />
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="/forgotpass" class="forgot-password">Forgot Password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="login-button" id="loginButton">
+          <span>🏃 Login to Fitzone</span>
+        </button>
+
+      </form>
+
+      <div class="divider"><span>or continue with</span></div>
+
+      <div class="social-login">
+        <button class="social-button" title="Login with Google">🌐</button>
+        <button class="social-button" title="Login with Facebook">📘</button>
+        <button class="social-button" title="Login with Apple">🍎</button>
+      </div>
+
+      <div class="signup-link">
+        New to Fitzone? <a href="/signup">Create an account</a>
+      </div>
+
+    </div><!-- /.login-container -->
+
+    <!-- Perks -->
+    <div class="perks-bar">
+      <div class="perk"><span class="icon">🔒</span> Secure & Private</div>
+      <div class="perk"><span class="icon">⚡</span> Instant Access</div>
+      <div class="perk"><span class="icon">🏙️</span> 500+ Gyms Nearby</div>
+    </div>
+
+  </div><!-- /.page-wrap -->
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  const emailErr = document.getElementById('emailError');
+  const passwordErr = document.getElementById('passwordError');
+
+  emailErr.textContent = '';
+  passwordErr.textContent = '';
+
+  try {
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (res.status === 200) {
+      // SUCCESS → redirect
+      window.location.href = '/home';
+    } else {
+      // ERROR → show under password
+      passwordErr.textContent = data.message;
+    }
+
+  } catch (err) {
+    passwordErr.textContent = 'Something went wrong. Try again.';
+  }
+});
+</script>
+
+</body>
+</html>

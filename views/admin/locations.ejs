@@ -1,0 +1,55 @@
+<%- include('header', { page: 'locations' }) %>
+
+<main class="admin-page-container"> <div class="flex justify-between items-start section-header">
+        <div>
+            <h1 class="brand-font text-6xl tracking-tight text-white">NETWORK MANAGEMENT</h1>
+            <p class="text-muted text-sm tracking-wide uppercase">Update and manage 500+ global locations</p>
+        </div>
+        <button class="btn-primary mt-2">
+            <span>+ Add New Branch</span>
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Total Cities</p>
+            <h3 class="brand-font text-5xl text-accent">28</h3>
+        </div>
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Offline Maintenance</p>
+            <h3 class="brand-font text-5xl text-accent-hot">4</h3>
+        </div>
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Network Load</p>
+            <h3 class="brand-font text-5xl text-accent-green">STABLE</h3>
+        </div>
+    </div>
+
+    <div class="admin-table-wrapper glass-card">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Location Name</th>
+                    <th>City</th>
+                    <th>Capacity</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="font-bold text-white">Jubilee Hills Elite</td>
+                    <td class="text-muted">Hyderabad</td>
+                    <td class="condensed text-accent">1,200 / 2,000</td>
+                    <td class="text-right">
+                        <div class="flex justify-end gap-4">
+                            <button class="btn-action btn-edit">Edit</button>
+                            <button class="btn-action btn-delete">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<%- include('footer') %>

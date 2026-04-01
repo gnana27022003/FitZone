@@ -1,0 +1,41 @@
+<%- include('header', { page: 'plans' }) %>
+
+<main class="admin-page-container">
+    <div class="flex justify-between items-start section-header">
+        <div>
+            <h1 class="brand-font text-6xl tracking-tight text-white uppercase">Plan Management</h1>
+            <p class="text-muted text-sm tracking-wide uppercase">Configure Membership Tiers</p>
+        </div>
+        <button class="btn-primary mt-2">
+            <span>+ Add New Tier</span>
+        </button>
+    </div>
+
+    <div class="admin-table-wrapper glass-card">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Membership Name</th>
+                    <th>Price Point</th>
+                    <th>Active Users</th>
+                    <th class="text-right">Management</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="font-bold text-white uppercase">Pro Membership</td>
+                    <td class="text-muted">₹1,799/mo</td>
+                    <td class="condensed text-accent">842</td>
+                    <td class="text-right">
+                        <div class="flex justify-end gap-4">
+                            <button class="btn-action btn-edit">Edit</button>
+                            <button class="btn-action btn-delete">Archive</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<%- include('footer') %>
