@@ -15,7 +15,7 @@ router.post('/signup',createUserAccount,(req,res)=>{
 
 router.post('/login',verifyUser)
 
-router.get('/home', (req, res) => {
+router.get('/', (req, res) => {
     res.render('home');
 });
 
