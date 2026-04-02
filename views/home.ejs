@@ -7,92 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
-  <style>
-    /* ═══════════════════════════════════════════════
-        CORE CSS - Retained from your original index.html
-    ═══════════════════════════════════════════════ */
-    :root {
-      --bg-base:       #080b10;
-      --bg-card:       rgba(12,18,28,0.82);
-      --border-glass:  rgba(0,180,255,0.12);
-      --border-glow:   rgba(0,180,255,0.45);
-      --accent:        #00b4ff;
-      --accent-hot:    #ff4d00;
-      --accent-green:  #00e676;
-      --text-primary:  #e8f2ff;
-      --text-muted:    #5e7a99;
-      --transition:    0.28s cubic-bezier(.4,0,.2,1);
-    }
-
-    body { font-family:'Barlow',sans-serif; background:var(--bg-base); color:var(--text-primary); overflow-x:hidden; }
-    .brand-font { font-family:'Bebas Neue',sans-serif; }
-    .condensed { font-family:'Barlow Condensed',sans-serif; }
-
-    /* BACKGROUND SYSTEM */
-    .bg-mesh{ position:fixed;inset:0;z-index:0;pointer-events:none; background: radial-gradient(ellipse 80% 60% at 20% 10%,rgba(0,100,220,0.13) 0%,transparent 70%), radial-gradient(ellipse 60% 50% at 80% 80%,rgba(255,77,0,0.09) 0%,transparent 70%); }
-    .bg-grid{ position:fixed;inset:0;z-index:0;pointer-events:none; background-image: linear-gradient(rgba(0,180,255,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(0,180,255,0.04) 1px,transparent 1px); background-size:48px 48px; animation:gridDrift 30s linear infinite; }
-    @keyframes gridDrift{to{background-position:48px 48px;}}
-
-    /* GLASS CARD */
-    .glass-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      backdrop-filter: blur(22px) saturate(1.3);
-      border-radius: 20px;
-      transition: all var(--transition);
-    }
-    .glass-card:hover { border-color: rgba(0,180,255,0.3); transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-
-    /* VIDEO ENGINE FIX */
-    .video-hero-container { position: relative; height: 100vh; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    #bgVideo { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -1; transform: translateX(-50%) translateY(-50%); object-fit: cover; opacity: 0.5; }
-    .hero-vignette { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,11,16,0.8) 0%, transparent 40%, rgba(8,11,16,0.9) 90%, var(--bg-base) 100%); z-index: 0; }
-
-    /* BUTTONS */
-    .btn-primary { background: linear-gradient(135deg, #0066cc, var(--accent)); color: #fff; padding: 0.8rem 2rem; border-radius: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,100,220,0.3); }
-    .btn-primary:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(0,180,255,0.5); }
-
-    /* STATS COUNTER */
-    .counter-num { font-family:'Bebas Neue',sans-serif; font-size: 4rem; background: linear-gradient(120deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-    /* REVEAL ANIMATIONS */
-    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    #bgVideo {
-    /* ... other properties ... */
-    opacity: 0.85; /* Increased from 0.5 for better clarity */
-}
-.hero-vignette {
-    position: absolute;
-    inset: 0;
-    /* We reduced the black tint from 0.8/0.9 down to 0.4/0.6 */
-    background: linear-gradient(to bottom, 
-        rgba(8,11,16,0.5) 0%, 
-        transparent 30%, 
-        transparent 70%, 
-        var(--bg-base) 100%);
-    z-index: 0;
-    pointer-events: none;
-}
-
-#bgVideo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: -1;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    opacity: 0.99; /* High opacity for clarity */
-    filter: brightness(0.75) saturate(0.9); /* Slight boost to light and color */
-}
-.video-hero-container h1 {
-    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
-}
-  </style>
+  <link rel="stylesheet" href="/home.css">
 </head>
 <body>
 
@@ -100,34 +15,55 @@
 <div class="bg-grid"></div>
 
 <%- include('header', { page: 'home' }) %>
-
 <header class="video-hero-container" id="home">
     <video autoplay muted loop playsinline id="bgVideo">
-    <source src="/Human_Shape_Exercise_Transformation_Video.mp4" type="video/mp4">
-</video>
+        <source src="/Gym_Workout_Video_Generation_Request.webm" type="video/mp4">
+    </video>
     <div class="hero-vignette"></div>
     
-    <div class="relative z-10 text-center px-4 reveal visible">
-        <div class="inline-block px-4 py-1 mb-6 rounded-full border border-accent/30 bg-accent/10 condensed text-accent text-xs tracking-widest uppercase">
-            Transform Your Reality
-        </div>
-        <h1 class="brand-font text-6xl md:text-9xl text-white leading-none mb-6">
-            FORGE YOUR <span class="text-accent italic">LEGEND</span>
-        </h1>
-        <p class="text-white/60 max-w-xl mx-auto mb-10 text-lg">
-            Experience the science of strength in our high-performance gym environments. Premium equipment. Elite trainers. Zero excuses.
-        </p>
-        <div class="flex flex-col md:flex-row gap-4 justify-center">
-            <a href="#plans" class="btn-primary"><span>Get Access Now</span></a>
-            <button class="px-8 py-3 rounded-xl border border-white/20 hover:bg-white/5 transition condensed font-bold tracking-widest" onclick="location.href='/locations'">VIEW LOCATIONS</button>
-        </div>
+    <div class="relative z-10 text-center px-4">
+        <% if (!isLoggedIn) { %>
+            <div class="inline-block px-4 py-1 mb-6 rounded-full border border-accent/30 bg-accent/10 condensed text-accent text-xs tracking-widest uppercase"> Forge Your Legend Today </div>
+            <h1 class="brand-font text-5xl sm:text-7xl md:text-9xl text-white leading-tight md:leading-none mb-6 hero-text-pop">
+                <span class="typewriter">LIMITLESS <span class="text-[#ff4d00] italic">POTENTIAL</span></span>
+            </h1>
+            <p class="text-white font-extrabold max-w-xl mx-auto mb-10 text-lg md:text-xl hero-text-pop">
+                Join the most aggressive fitness network in India. Stop existing. Start evolving.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="/signup" class="btn-hot px-10 py-4 rounded-xl text-lg uppercase tracking-wider"><span>Start 7-Day Trial</span></a>
+            </div>
+
+        <% } else if (isLoggedIn && (!subscription || subscription.status !== 'active')) { %>
+            
+            <h1 class="brand-font text-6xl md:text-9xl text-white leading-none mb-6 hero-text-pop">
+                <span class="typewriter">ACTIVATE <span class="text-[#ff4d00] italic">ELITE</span> ACCESS</span>
+            </h1>
+            <p class="text-white font-extrabold max-w-xl mx-auto mb-10 text-lg md:text-xl hero-text-pop">
+                Welcome back. The weights are waiting. Choose your tier and enter the zone.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#plans" class="btn-hot px-10 py-4 rounded-xl text-lg uppercase tracking-wider"><span>Activate Plan</span></a>
+            </div>
+
+        <% } else { %>
+            <h1 class="brand-font text-5xl sm:text-7xl md:text-9xl text-white leading-tight md:leading-none mb-6 hero-text-pop">
+                <span class="typewriter">WELCOME BACK, <span class="text-[#00b4ff] italic">ATHLETE</span></span>
+            </h1>
+            <p class="text-white font-extrabold max-w-xl mx-auto mb-10 text-lg md:text-xl hero-text-pop">
+                Your <%= subscription.planName %> access is live. Outperform your past self.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="/profile" class="btn-hot px-10 py-4 rounded-xl text-lg uppercase tracking-wider"><span>Enter Dashboard</span></a>
+            </div>
+        <% } %>
     </div>
 </header>
 
 <section class="relative z-10 py-20 -mt-20">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6">
         <div class="glass-card p-8 text-center reveal">
-            <div class="counter-num" data-target="500">0</div>
+            <div class="counter-num" data-target="<%= locations.length %>">0</div>
             <div class="condensed text-muted tracking-widest uppercase text-xs">Branches Nationwide</div>
         </div>
         <div class="glass-card p-8 text-center reveal">
@@ -144,7 +80,6 @@
         </div>
     </div>
 </section>
-
 <section class="py-24" id="features">
     <div class="max-w-7xl mx-auto px-6">
         <div class="text-center mb-16">
@@ -170,24 +105,38 @@
         </div>
     </div>
 </section>
-
 <section class="py-24 bg-white/5 backdrop-blur-sm" id="plans">
     <div class="max-w-7xl mx-auto px-6">
-        <h2 class="brand-font text-6xl text-center mb-16">Select Your Power</h2>
+        <h2 class="brand-font text-6xl text-center mb-16">
+            <%= (subscription && subscription.status === 'active') ? 'YOUR MEMBERSHIP' : 'SELECT YOUR POWER' %>
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="glass-card p-10 border-accent/40 relative scale-105 shadow-[0_0_50px_rgba(0,180,255,0.15)] reveal">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent text-white px-6 py-1 rounded-full text-xs font-bold tracking-widest uppercase">Popular Choice</div>
-                <h3 class="brand-font text-4xl mb-4 text-white">PRO MEMBERSHIP</h3>
-                <div class="text-5xl brand-font mb-6">₹1,799 <span class="text-sm text-muted uppercase">/mo</span></div>
-                <ul class="space-y-4 mb-10 text-white/70">
-                    <li>✓ All Branches (City Wide)</li>
-                    <li>✓ 4 PT Sessions Included</li>
-                    <li>✓ Custom Nutrition Plan</li>
-                    <li>✓ All Group Classes</li>
-                </ul>
-                <a href="#" class="btn-primary w-full text-center" onclick="location.href='/signup'"><span>Become a Pro</span></a>
-            </div>
-            </div>
+            
+            <% plans.forEach((plan, index) => { %>
+                <% const isCurrentPlan = subscription && subscription.planId.toString() === plan._id.toString(); %>
+                
+                <div class="glass-card p-10 reveal <%= index === 1 ? 'border-accent/40 relative scale-105 shadow-[0_0_50px_rgba(0,180,255,0.15)]' : '' %> <%= isCurrentPlan ? 'border-accent-green/50' : '' %>">
+                    
+                    <% if(isCurrentPlan) { %>
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent-green text-white px-6 py-1 rounded-full text-xs font-bold tracking-widest uppercase">Current Plan</div>
+                    <% } else if(index === 1) { %>
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent text-white px-6 py-1 rounded-full text-xs font-bold tracking-widest uppercase">Popular Choice</div>
+                    <% } %>
+                    
+                    <h3 class="brand-font text-4xl mb-4 text-white uppercase"><%= plan.name %></h3>
+                    <% if (isCurrentPlan) { %>
+                        <a href="/profile" class="btn-primary w-full text-center bg-accent-green/20 border border-accent-green/50">
+                            <span>Manage Membership</span>
+                        </a>
+                    <% } else { %>
+                        <a href="/checkout?planId=<%= plan._id %>" class="btn-primary w-full text-center">
+                            <span><%= isLoggedIn ? 'Upgrade Now' : 'Join ' + plan.name %></span>
+                        </a>
+                    <% } %>
+                </div>
+            <% }) %>
+
+        </div>
     </div>
 </section>
 
@@ -203,7 +152,7 @@
                         <p class="text-xs text-accent uppercase">90 Day Transformation</p>
                     </div>
                 </div>
-                <p class="italic text-white/80 leading-relaxed">"Dropped 15kg of fat and gained a lifetime of discipline. The 24/7 access at FitZone made it impossible to find an excuse."</p>
+                <p class="italic text-white/80 leading-relaxed">"Dropped 15kg of fat and gained discipline. The 24/7 access at FitZone made it impossible to find an excuse."</p>
             </div>
             <div class="glass-card p-8 reveal">
                 <div class="flex items-center gap-4 mb-6">
@@ -213,48 +162,31 @@
                         <p class="text-xs text-accent-hot uppercase">Powerlifting Build</p>
                     </div>
                 </div>
-                <p class="italic text-white/80 leading-relaxed">"Elite equipment that you won't find anywhere else. The community here pushes you beyond your mental limits every single day."</p>
+                <p class="italic text-white/80 leading-relaxed">"Elite equipment that you won't find anywhere else. The community here pushes you beyond your limits."</p>
             </div>
         </div>
     </div>
 </section>
 
-<footer class="py-20 border-t border-white/10 bg-black/40">
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div>
-            <div class="flex items-center gap-2 mb-6">
-                <span class="text-2xl">⚡</span>
-                <span class="brand-font text-3xl tracking-widest text-white">FitZone</span>
-            </div>
-            <p class="text-sm text-muted leading-relaxed">India's most aggressive fitness network. 500+ locations, world-class coaching, and 24/7 elite access.</p>
-        </div>
-        <div>
-            <h4 class="condensed font-bold tracking-widest mb-6 uppercase text-xs">Connect</h4>
-            <div class="flex gap-4">
-                <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:border-accent transition">📸</a>
-                <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:border-accent transition">🐦</a>
-                <a href="#" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:border-accent transition">▶️</a>
-            </div>
-        </div>
-        <div class="text-sm text-muted">
-            <p>© 2026 FitZone Technologies. Build your legacy.</p>
-        </div>
-    </div>
-</footer>
+<%- include('footer') %>
 
 <script>
-    // Intersection Observer for Animations
+    // Reveal Observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Animated Counters
+    // Dynamic Counter Script
     function animateCounter(el, target) {
         let current = 0;
-        const step = target / 100;
+        const duration = 2000; 
+        const frameRate = 1000 / 60;
+        const totalFrames = Math.round(duration / frameRate);
+        const increment = target / totalFrames;
+
         const update = () => {
-            current += step;
+            current += increment;
             if (current < target) {
                 el.innerText = Math.floor(current).toLocaleString() + "+";
                 requestAnimationFrame(update);
@@ -274,17 +206,6 @@
         });
     }, { threshold: 0.5 });
     document.querySelectorAll('.counter-num').forEach(el => counterObserver.observe(el));
-    
-  window.addEventListener('load', () => {
-    const video = document.getElementById('bgVideo');
-    if (video) {
-      video.play().catch(error => {
-        console.log("Autoplay was prevented. Highlighting the 'Get Access' button instead.");
-      });
-    }
-  });
-
 </script>
-
 </body>
 </html>

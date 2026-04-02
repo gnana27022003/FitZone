@@ -1,0 +1,87 @@
+<%- include('header') %>
+
+<main class="admin-page-container pt-0">
+    <div class="max-w-4xl mx-auto px-6">
+        
+        <div class="mb-10 flex justify-between items-end border-b border-white/10 pb-6">
+            <div>
+                <h1 class="brand-font text-5xl text-white uppercase">Athlete Info</h1>
+                <p class="text-muted tracking-widest uppercase text-xs">Internal Records — Read Only</p>
+            </div>
+            <a href="/admin/subscriptions" class="text-accent hover:underline condensed text-sm uppercase">← Back to List</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div class="glass-card p-8 text-center h-fit">
+                <div class="w-24 h-24 bg-accent/20 rounded-full mx-auto mb-6 flex items-center justify-center border-2 border-accent/40">
+                    <span class="text-3xl font-bold text-accent uppercase"><%= user.name.substring(0,2) %></span>
+                </div>
+                <h2 class="text-xl font-bold text-white mb-1"><%= user.name %></h2>
+                <p class="text-xs text-muted mb-6"><%= user.email %></p>
+                <div class="badge <%= subscription && subscription.status === 'active' ? 'badge-blue' : 'badge-orange' %> mx-auto">
+                    <%= subscription ? subscription.status.toUpperCase() : 'NO PLAN' %>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 space-y-6">
+                
+                <div class="glass-card p-8">
+                    <h3 class="condensed text-accent tracking-widest uppercase mb-6 text-sm">Account Information</h3>
+                    <div class="grid grid-cols-2 gap-y-6 text-sm">
+                        <div>
+                            <p class="text-muted uppercase text-[10px] mb-1">Full Name</p>
+                            <p class="text-white font-medium"><%= user.name %></p>
+                        </div>
+                        <div>
+                            <p class="text-muted uppercase text-[10px] mb-1">Email Address</p>
+                            <p class="text-white font-medium"><%= user.email %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 border-l-4 border-accent">
+                    <h3 class="condensed text-accent tracking-widest uppercase mb-6 text-sm">Subscription Analytics</h3>
+                    
+                    <% if (subscription) { %>
+                        <div class="grid grid-cols-2 gap-y-8 text-sm">
+                            <div>
+                                <p class="text-muted uppercase text-[10px] mb-1">Current Plan</p>
+                                <p class="text-white font-bold"><%= subscription.planName %></p>
+                            </div>
+                            <div>
+                                <p class="text-muted uppercase text-[10px] mb-1">Contract Value</p>
+                                <p class="text-white font-bold">₹<%= subscription.price %></p>
+                            </div>
+                            <div>
+                                <p class="text-muted uppercase text-[10px] mb-1">Activation Date</p>
+                                <p class="text-white font-medium">
+                                    <%= new Date(subscription.startDate).toLocaleDateString('en-IN', { dateStyle: 'long' }) %>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-muted uppercase text-[10px] mb-1">Expiration Date</p>
+                                <p class="text-white font-medium">
+                                    <%= new Date(subscription.expiryDate).toLocaleDateString('en-IN', { dateStyle: 'long' }) %>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-muted uppercase text-[10px] mb-1">Payment Method</p>
+                                <p class="text-white font-medium uppercase"><%= subscription.paymentMethod || 'N/A' %></p>
+                            </div>
+                            <div>
+                                <p class="text-muted uppercase text-[10px] mb-1">Database ID</p>
+                                <p class="text-[10px] font-mono text-muted"><%= subscription._id %></p>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted italic">No subscription history found for this athlete.</p>
+                    <% } %>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('footer') %>

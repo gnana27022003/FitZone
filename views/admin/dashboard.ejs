@@ -12,16 +12,28 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
         <div class="glass-card">
             <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Total Revenue</p>
-            <h2 class="counter-num brand-font text-5xl text-accent" data-target="842000">0</h2>
+            <h2 class="counter-num brand-font text-5xl text-accent" 
+                data-target="<%= stats.revenue %>">
+                ₹<%= stats.revenue.toLocaleString() %>
+            </h2>
         </div>
+
         <div class="glass-card">
             <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Active Legends</p>
-            <h2 class="counter-num brand-font text-5xl text-accent" data-target="1240">0</h2>
+            <h2 class="brand-font text-5xl text-accent" 
+                data-target="<%= stats.active %>">
+                <%= stats.active %>
+            </h2>
         </div>
+
         <div class="glass-card">
             <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Total Cities</p>
-            <h2 class="counter-num brand-font text-5xl text-accent" data-target="28">0</h2>
+            <h2 class=" brand-font text-5xl text-accent" 
+                data-target="<%= stats.locations %>">
+                <%= stats.locations %>
+            </h2>
         </div>
+
         <div class="glass-card">
             <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Network Load</p>
             <h2 class="brand-font text-5xl text-accent-green uppercase">Stable</h2>

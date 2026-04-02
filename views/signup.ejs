@@ -45,7 +45,7 @@
         🎉 Account created! Welcome to Fitzone. Redirecting…
       </div>
 
-      <form id="signupForm" method="post" action="/signup">
+      <form id="signupForm" >
 
         <!-- ── Full Name ───────────────────────────── -->
         <div class="form-group">
@@ -115,19 +115,12 @@
         </div>
 
         <!-- ── Submit ──────────────────────────────── -->
-        <button type="submit" class="login-button"  id="signupButton" style="margin-top:0.4rem">
+        <button type="submit" class="login-button"  onclick="handleSubmit()" id="signupButton" style="margin-top:0.4rem">
           <span>🚀 Start Your Fitness Journey</span>
         </button>
 
       </form>
 
-      <!-- Divider + social -->
-      <div class="divider"><span>or sign up with</span></div>
-      <div class="social-login">
-        <button class="social-button" title="Continue with Google">🌐</button>
-        <button class="social-button" title="Continue with Facebook">📘</button>
-        <button class="social-button" title="Continue with Apple">🍎</button>
-      </div>
 
       <div class="signup-link">
         Already a member? <a href="/login">Log in here</a>
@@ -143,80 +136,83 @@
 
   </div><!-- /.page-wrap -->
 
-  <script>
+ <script>
   /**
-   * ─────────────────────────────────────────────────────────────────
-   *  Fitzone Signup — Frontend State & Verification Logic
-   *  All verification is simulated on the frontend (demo mode).
-   *  In production, replace simulateBackend() with real fetch() calls
-   *  to /api/send-otp and /api/verify-otp.
-   * ─────────────────────────────────────────────────────────────────
-   */
+ * ─────────────────────────────────────────────────────────────────
+ * Fitzone Signup — Optimized Frontend Logic
+ * ─────────────────────────────────────────────────────────────────
+ */
 
-  // ── State object ───────────────────────────────────────────────────
-  const state = {
-    email: { otpSent: false, verified: false, otp: null }
-  };
+// ── State management ────────────────────────────────────────────────
+const state = {
+  email: { verified: false }
+};
 
-  
-  // ── Send OTP ───────────────────────────────────────────────────────
+// ── Real-time Error Clearing ────────────────────────────────────────
+// This ensures that when a user starts fixing an error, the red text disappears.
+document.querySelectorAll('input').forEach(input => {
+  input.addEventListener('input', (e) => {
+    const errorEl = document.getElementById(`${e.target.id}Error`) || 
+                    (e.target.id === 'fullName' ? document.getElementById('nameError') : null);
+    if (errorEl) errorEl.textContent = '';
+  });
+});
 
-  async function sendOtp(field) {
+// ── Send OTP Logic ──────────────────────────────────────────────────
+async function sendOtp(field) {
   const val = document.getElementById(field).value.trim();
-  const errorEl = document.getElementById(`${field}Error`);
+  const statusEl = document.getElementById(`${field}Status`);
   const btn = document.getElementById(`${field}VerifyBtn`);
-  btn.disabled = true;
-  btn.textContent = "Sending...";
-
-  if (!val) {
-    showError(errorEl, `Please enter ${field}`);
+  
+  if (!val || !val.includes('@')) {
+    showError(document.getElementById(`${field}Error`), "Please enter a valid email");
     return;
   }
 
-  // ✅ OPEN UI IMMEDIATELY (no waiting)
-  document.getElementById(`${field}OtpSection`).classList.add('open');
-  showStatus(document.getElementById(`${field}Status`), 'loading', 'Sending OTP...');
+  // UI Feedback
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  showStatus(statusEl, 'loading', 'Sending OTP to your inbox...');
 
   try {
     const res = await fetch('/generate-email-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ [field]: val })
+      body: JSON.stringify({ [field]: val ,type:'signup'})
     });
 
     const data = await res.json();
 
-    if (!res.ok) {
-      showStatus(document.getElementById(`${field}Status`), 'fail', data.message);
-      return;
+    if (res.ok) {
+      document.getElementById(`${field}OtpSection`).classList.add('open');
+      showStatus(statusEl, 'success', 'OTP Sent Successfully');
+      btn.textContent = "Resend?";
+      btn.disabled = false;
+    } else {
+      showStatus(statusEl, 'fail', data.message || "Failed to send OTP");
+      btn.disabled = false;
+      btn.textContent = "Verify";
     }
-
-    // ✅ success update
-    showStatus(document.getElementById(`${field}Status`), 'success', 'OTP sent');
-
   } catch (err) {
-    showStatus(document.getElementById(`${field}Status`), 'fail', 'Server error');
+    showStatus(statusEl, 'fail', 'Network error. Try again.');
+    btn.disabled = false;
   }
 }
-  // ── Verify OTP ─────────────────────────────────────────────────────
-  async function verifyOtp(field) {
+
+// ── Verify OTP Logic ────────────────────────────────────────────────
+async function verifyOtp(field) {
   const otp = document.getElementById(`${field}Otp`).value.trim();
   const val = document.getElementById(field).value.trim();
-
   const statusEl = document.getElementById(`${field}Status`);
-  const errorEl = document.getElementById(`${field}Error`);
   const wrapEl = document.getElementById(`${field}Wrapper`);
 
-  if (!otp) {
-    showError(errorEl, "Please enter OTP");
+  if (otp.length !== 6) {
+    showStatus(statusEl, 'fail', "Enter 6-digit OTP");
     return;
   }
 
   try {
-    const endpoint =  '/verify-email'
-      
-
-    const res = await fetch(endpoint, {
+    const res = await fetch('/verify-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ [field]: val, otp })
@@ -224,125 +220,96 @@
 
     const data = await res.json();
 
-    if (!res.ok) {
-      showStatus(statusEl, 'fail', data.message);
-      wrapEl.classList.add('error');
-      return;
+    if (res.ok) {
+      showStatus(statusEl, 'success', 'Email Verified ✅');
+      state[field].verified = true;
+      
+      // Lock UI
+      wrapEl.classList.add('verified');
+      document.getElementById(`${field}OtpSection`).classList.remove('open');
+      document.getElementById(field).readOnly = true; // Prevent changing email after verification
+      const verifyBtn = document.getElementById(`${field}VerifyBtn`);
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = "Verified ✅";
+      verifyBtn.style.background = "var(--accent-green)";
+    } else {
+      showStatus(statusEl, 'fail', data.message || "Invalid OTP");
     }
-
-    
-  showStatus(statusEl, 'success', data.message);
-
-
-  state[field].verified = true;
-
-  
-  wrapEl.classList.add('verified');
-  wrapEl.classList.remove('error');
-
-  // ❌ hide OTP section
-  document.getElementById(`${field}OtpSection`).classList.remove('open');
-
-  // ❌ disable verify button (prevents re-click spam)
-  document.getElementById(`${field}VerifyBtn`).disabled = true;
-  document.getElementById(`${field}VerifyBtn`).textContent = "Verified ✅";
-
   } catch (err) {
-    showError(errorEl, 'Server error');
+    showStatus(statusEl, 'fail', 'Verification failed');
   }
 }
-  // ── Password toggle ────────────────────────────────────────────────
-  document.getElementById('passwordToggle').addEventListener('click', function () {
-    const pwd = document.getElementById('password');
-    const isVisible = pwd.type === 'text';
-    pwd.type = isVisible ? 'password' : 'text';
-    this.textContent = isVisible ? '👁️' : '🙈';
-  });
 
-  // ── Password strength meter ────────────────────────────────────────
-  document.getElementById('password').addEventListener('input', function () {
-    const val = this.value;
-    const meter = document.getElementById('strengthMeter');
-    const bar   = document.getElementById('strengthBar');
-    const label = document.getElementById('strengthLabel');
+// ── Password Strength & Toggle (Existing logic is good) ──────────────
+document.getElementById('passwordToggle').addEventListener('click', function () {
+  const pwd = document.getElementById('password');
+  pwd.type = pwd.type === 'password' ? 'text' : 'password';
+  this.textContent = pwd.type === 'text' ? '👁️' : '🙈';
+});
 
-    if (!val) { meter.style.display = 'none'; return; }
-    meter.style.display = 'block';
+// ── Final Form Submission ───────────────────────────────────────────
+document.getElementById('signupForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
 
-    let score = 0;
-    if (val.length >= 8)  score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
+  // Clear previous errors
+  document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
 
-    const levels = [
-      { pct: '20%', color: '#ff3b3b', text: 'Weak' },
-      { pct: '45%', color: '#ff9800', text: 'Fair' },
-      { pct: '70%', color: '#f5d000', text: 'Good' },
-      { pct: '100%', color: 'var(--accent-green)', text: 'Strong 💪' },
-    ];
-    const lvl = levels[score - 1] || levels[0];
-    bar.style.width = lvl.pct;
-    bar.style.background = lvl.color;
-    label.textContent = lvl.text;
-    label.style.color = lvl.color;
-  });
+  const name = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('signupButton');
 
-  // ── Form submit ────────────────────────────────────────────────────
-  document.getElementById('signupForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    let valid = true;
+  // Frontend Validation
+  let hasError = false;
+  if (!name) { showError(document.getElementById('nameError'), "Name is required"); hasError = true; }
+  if (!state.email.verified) { showError(document.getElementById('emailError'), "Verification required"); hasError = true; }
+  if (password.length < 8) { showError(document.getElementById('passwordError'), "Minimum 8 characters required"); hasError = true; }
 
-    // Name
-    const name = document.getElementById('fullName').value.trim();
-    if (!name) { showError(document.getElementById('nameError'), 'Name is required'); valid = false; }
-    else clearError(document.getElementById('nameError'));
+  if (hasError) return;
 
-    // Email
-    if (!state.email.verified) {
-      showError(document.getElementById('emailError'), 'Please verify your email first'); valid = false;
+  // Process Signup
+  btn.disabled = true;
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<span>⏳ Forging your account...</span>`;
+
+  try {
+    const res = await fetch('/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      const successEl = document.getElementById('successMessage');
+      successEl.textContent = "🎉 " + data.message;
+      successEl.classList.add('show');
+      btn.innerHTML = `<span>✅ Welcome to the Team!</span>`;
+      btn.style.background = "var(--accent-green)";
+      
+      // Smooth Redirection
+      setTimeout(() => { window.location.href = '/'; }, 1000);
+    } else {
+      // Backend validation error (e.g. User already exists)
+      showError(document.getElementById('emailError'), data.message);
+      btn.disabled = false;
+      btn.innerHTML = originalText;
     }
-    
-    
-    // Password
-    const pwd = document.getElementById('password').value;
-    if (pwd.length < 8) {
-      showError(document.getElementById('passwordError'), 'Password must be at least 8 characters'); valid = false;
-    } else clearError(document.getElementById('passwordError'));
-
-    if (!valid) return;
-
-    // Submit
-    const btn = document.getElementById('signupButton');
-    btn.disabled = true;
-    btn.querySelector('span').textContent = '⏳ Creating account…';
-
-    // Simulate API call
-    await new Promise(r => setTimeout(r, 1200));
-
-    // Show success
-    const msg = document.getElementById('successMessage');
-    msg.classList.add('show');
-    btn.querySelector('span').textContent = '✓ Account Created!';
-    btn.style.background = 'linear-gradient(135deg, var(--accent-green), #00a854)';
-
-    // Redirect after delay (replace with real redirect)
-    setTimeout(() => { alert('Demo: Redirecting to dashboard…'); }, 2000);
-  });
-
-  // ── Helpers ────────────────────────────────────────────────────────
-  function showError(el, msg) { el.textContent = msg; }
-  function clearError(el) { el.textContent = ''; }
-
-  function showStatus(el, type, msg) {
-    el.className = `verify-status show ${type}`;
-    el.textContent = msg;
+  } catch (err) {
+    showError(document.getElementById('emailError'), "Connection lost. Please try again.");
+    btn.disabled = false;
+    btn.innerHTML = originalText;
   }
-  function hideStatus(el) {
-    el.className = 'verify-status';
-    el.textContent = '';
-  }
-  </script>
+});
+
+// Helper Functions
+function showError(el, msg) { el.textContent = msg; el.style.color = "#ff3b3b"; }
+function showStatus(el, type, msg) {
+  el.className = `verify-status show ${type}`;
+  el.textContent = msg;
+}
+ </script>
 
 </body>
 </html>

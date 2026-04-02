@@ -1,0 +1,47 @@
+<%- include('header', { page: 'locations' }) %>
+
+<main class="admin-page-container min-h-[80vh] flex items-center justify-center">
+    <div class="glass-card w-full max-w-xl p-10 reveal visible">
+        <div class="mb-10 text-center">
+            <h1 class="brand-font text-5xl text-white tracking-wider">REGISTER BRANCH</h1>
+            <p class="text-muted text-xs uppercase tracking-widest mt-2">Add new location to FitZone network</p>
+        </div>
+
+        <form action="/admin/locations/save" method="POST" class="space-y-6">
+            <div class="form-group">
+                <label class="form-label">Branch / Area Name</label>
+                <input type="text" name="areaName" class="admin-input" placeholder="e.g., Jubilee Hills Center" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Full Street Address</label>
+                <input type="text" name="address" class="admin-input" placeholder="Building No, Street, Landmark" required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" name="pincode" class="admin-input" placeholder="500033" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <input type="text" name="state" class="admin-input" placeholder="Telangana" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Country</label>
+                <input type="text" name="country" class="admin-input" value="India" required>
+            </div>
+
+            <div class="pt-4 flex gap-4">
+                <a href="/admin/locations" class="btn-action btn-edit flex-1 text-center py-3">Cancel</a>
+                <button type="submit" class="btn-action btn-edit flex-1 text-center py-3">
+                    <span>📍 Activate Location</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<%- include('footer') %>

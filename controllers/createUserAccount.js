@@ -1,46 +1,68 @@
-const User = require('../models/user')
-const bcrypt = require('bcrypt')
+const User = require('../models/user'); // Ensure this matches your filename
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const createUserAccount = async(req,res) => {
-    try{
-        const {name,email,password} = req.body;
-        name = name.trim()
-        email = email.trim()
-        password = password.trim()
-        if(!name || !email || !password){
+const createUserAccount = async (req, res) => {
+    try {
+        let { name, email, password } = req.body;
+
+        // 1. Validation Logic
+        if (!name || !email || !password) {
             return res.status(400).json({
-                success:false,
-                message:'Please fill out all the required fields'
-            })
+                success: false,
+                message: 'All fields are required to forge your account.'
+            });
         }
-         const existingUser = await User.findOne({email:email})
 
-        if(existingUser){
+        name = name.trim();
+        email = email.trim();
+        password = password.trim();
+
+        // 2. Check for existing user
+        const existingUser = await User.findOne({ email: email });
+        if (existingUser) {
             return res.status(409).json({
-                success:false,
-                message:'User Already exists with same email !!'
-            })
+                success: false,
+                message: 'This email is already registered with FitZone.'
+            });
         }
 
+        // 3. Hash Password and Create User
         const saltrounds = 10;
-        const hashedPassword = await bcrypt.hash(password,saltrounds)
-        await User.create({
+        const hashedPassword = await bcrypt.hash(password, saltrounds);
+        const newUser = await User.create({
             name,
             email,
-            password:hashedPassword
-        })
-        return res.status(200).json({
-            success:true,
-            message:'User Account created successfully'
-        })
-        
-    }
-    catch(err){
-        return res.status(500).json({
-            success:false,
-            message:'Internal sever error'
-        })
-    }
-}
+            password: hashedPassword
+        });
 
-module.exports = {createUserAccount}
+        // 4. JWT & Cookie Sync (Real-world "Smooth Transition")
+        // Generate token immediately so the user doesn't have to log in right after signing up
+        const token = jwt.sign(
+            { userId: newUser._id }, 
+            process.env.SECRET, 
+            { expiresIn: '1h' }
+        );
+
+        // Set the secure cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: "strict",
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Account forged successfully! Redirecting...'
+        });
+
+    } catch (err) {
+        console.error('Signup Error:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error. Please try again later.'
+        });
+    }
+};
+
+module.exports = { createUserAccount };

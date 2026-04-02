@@ -1,0 +1,43 @@
+<%- include('header', { page: 'plans' }) %>
+
+<main class="admin-page-container min-h-[80vh] flex items-center justify-center">
+    <div class="glass-card w-full max-w-xl p-10 reveal visible">
+        <div class="mb-10 text-center">
+            <h1 class="brand-font text-5xl text-white tracking-wider">PLAN CONFIGURATION</h1>
+            <p class="text-muted text-xs uppercase tracking-widest mt-2">Define new membership tier</p>
+        </div>
+
+        <form action="/admin/plans/save" method="POST" class="space-y-6">
+            <div class="form-group">
+                <label class="form-label">Membership Name</label>
+                <input type="text" name="name" class="admin-input" placeholder="e.g., Elite Athlete Pro" required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Price (₹)</label>
+                    <input type="number" name="price" class="admin-input" placeholder="1999" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (Days)</label>
+                    <input type="number" name="duration" class="admin-input" placeholder="30" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Features List</label>
+                <textarea name="features" class="admin-input h-32" placeholder="Enter features separated by commas (e.g., 24/7 Access, Personal Trainer, Sauna)"></textarea>
+                <p class="text-[10px] text-muted mt-2 italic">Separating features by commas allows for better front-end rendering.</p>
+            </div>
+
+            <div class="pt-4 flex gap-4">
+                <a href="/admin/plans" class="btn-action btn-edit flex-1 text-center py-3">Cancel</a>
+                <button type="submit" class="btn-action btn-edit flex-1 text-center py-3">
+                    <span>🚀 Save Membership</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<%- include('footer') %>

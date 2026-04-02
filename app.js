@@ -31,12 +31,17 @@ app.use(express.static(path.join(__dirname,'css')))
 app.use(express.static(path.join(__dirname,'imgs')))
 app.use(express.static(path.join(__dirname,'views/admin')))
 
+const errorMiddleware = require('./middlewares/errorMiddleware');
+
+
 const route = require('./routers/route')
 app.use(route)
-
+app.use(errorMiddleware); 
 const aroute = require('./routers/aroute')
-app.use(aroute)
+app.use('/admin/',aroute)
+
+
 
 app.listen(process.env.PORT,()=>{
-    console.log(`Server Running on http://localhost:${process.env.PORT}/home`)
+    console.log(`Server Running on http://localhost:${process.env.PORT}/signup`)
 })

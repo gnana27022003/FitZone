@@ -1,0 +1,87 @@
+<footer class="footer-container border-t border-white/5 mt-20">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <span class="text-xl">⚡</span>
+                <span class="brand-font text-xl tracking-widest text-white">FITZONE <span class="text-accent">CORE</span></span>
+            </div>
+            
+            <p class="text-[10px] text-muted tracking-[0.2em] uppercase">
+                &copy; 2026 FitZone Network Engine. All Rights Reserved.
+            </p>
+
+            <div class="flex gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-accent-green animate-pulse"></div>
+                    <span class="text-[10px] text-accent-green condensed uppercase tracking-widest">Systems Nominal</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * Dynamic Counter Animation
+         * Used for Revenue, Active Legends, and Locations
+         */
+        function animateCounter(el, target) {
+            let current = 0;
+            const duration = 1500; // 1.5 Seconds for a snappier admin feel
+            const frameRate = 1000 / 60;
+            const totalFrames = Math.round(duration / frameRate);
+            const increment = target / totalFrames;
+
+            const update = () => {
+                current += increment;
+                if (current < target) {
+                    // Check if it's revenue (contains ₹ in HTML) or just a number
+                    if (el.innerText.includes('₹')) {
+                        el.innerText = '₹' + Math.floor(current).toLocaleString();
+                    } else {
+                        el.innerText = Math.floor(current).toLocaleString() + "+";
+                    }
+                    requestAnimationFrame(update);
+                } else {
+                    el.innerText = el.innerText.includes('₹') ? 
+                        '₹' + target.toLocaleString() : 
+                        target.toLocaleString() + "+";
+                }
+            };
+            update();
+        }
+
+        /**
+         * Intersection Observer for Reveal & Counters
+         */
+        const adminObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Handle Scroll Reveal
+                    if (entry.target.classList.contains('reveal')) {
+                        entry.target.classList.add('visible');
+                    }
+                    
+                    // Handle Counter Trigger
+                    if (entry.target.classList.contains('counter-num') && !entry.target.dataset.counted) {
+                        entry.target.dataset.counted = "true";
+                        const target = parseInt(entry.target.dataset.target);
+                        if (!isNaN(target)) animateCounter(entry.target, target);
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Initialize observers
+        document.querySelectorAll('.reveal, .counter-num').forEach(el => adminObserver.observe(el));
+
+        /**
+         * Navbar Scroll Logic
+         */
+        const navbar = document.getElementById('navbar');
+        if (navbar) {
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 20);
+            });
+        }
+    </script>
+</body>
+</html>

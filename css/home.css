@@ -1,0 +1,227 @@
+  /* ═══════════════════════════════════════════════
+        CORE CSS - Retained for Theme Consistency
+    ═══════════════════════════════════════════════ */
+    :root {
+      --bg-base:       #080b10;
+      --bg-card:       rgba(12,18,28,0.82);
+      --border-glass:  rgba(0,180,255,0.12);
+      --accent:        #00b4ff;
+      --text-primary:  #e8f2ff;
+      --text-muted:    #5e7a99;
+      --transition:    0.28s cubic-bezier(.4,0,.2,1);
+    }
+
+    body { font-family:'Barlow',sans-serif; background:var(--bg-base); color:var(--text-primary); overflow-x:hidden; }
+    .brand-font { font-family:'Bebas Neue',sans-serif; }
+    .condensed { font-family:'Barlow Condensed',sans-serif; }
+
+    .bg-mesh{ position:fixed;inset:0;z-index:0;pointer-events:none; background: radial-gradient(ellipse 80% 60% at 20% 10%,rgba(0,100,220,0.13) 0%,transparent 70%), radial-gradient(ellipse 60% 50% at 80% 80%,rgba(255,77,0,0.09) 0%,transparent 70%); }
+    .bg-grid{ position:fixed;inset:0;z-index:0;pointer-events:none; background-image: linear-gradient(rgba(0,180,255,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(0,180,255,0.04) 1px,transparent 1px); background-size:48px 48px; }
+
+    .glass-card { background: var(--bg-card); border: 1px solid var(--border-glass); backdrop-filter: blur(22px) saturate(1.3); border-radius: 20px; transition: all var(--transition); }
+    .glass-card:hover { border-color: rgba(0,180,255,0.3); transform: translateY(-5px); }
+
+    .video-hero-container { position: relative; height: 100vh; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    #bgVideo { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -1; transform: translate(-50%, -50%); object-fit: cover; opacity: 0.99; filter: brightness(0.75); }
+    .hero-vignette { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,11,16,0.5) 0%, transparent 30%, transparent 70%, var(--bg-base) 100%); z-index: 0; pointer-events: none; }
+
+    .btn-primary { background: linear-gradient(135deg, #0066cc, var(--accent)); color: #fff; padding: 0.8rem 2rem; border-radius: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; }
+    .counter-num { font-family:'Bebas Neue',sans-serif; font-size: 4rem; background: linear-gradient(120deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    :root {
+  --bg-base:       #05070a; /* Deepened for better contrast */
+  --bg-card:       rgba(12, 18, 28, 0.9); /* Increased opacity for card readability */
+  --accent:        #00b4ff;
+  --accent-hot:    #ff4d00;
+  
+  /* CONTRAST FIXES */
+  --text-primary:  #ffffff; /* Pure white for maximum visibility */
+  --text-muted:    #a0b1c5; /* Brightened from pale blue-grey */
+  --border-glass:  rgba(0, 180, 255, 0.25); /* More defined borders */
+  
+  --transition:    0.28s cubic-bezier(.4, 0, .2, 1);
+}
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased; /* Smoother text rendering */
+  line-height: 1.6;
+}
+
+/* Ensure brand headers are bold and readable */
+.brand-font {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  font-weight: 400; /* Bebas Neue is naturally bold */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); /* Adds "lift" from background */
+}
+
+.condensed {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; /* Increased from 400/600 for better visibility */
+}
+/* Fix for the pale descriptions in plans and about us */
+p.text-muted, .section-sub {
+  color: var(--text-muted) !important;
+  font-weight: 500; /* Semi-bold to prevent "thin" look on high-res screens */
+}
+
+/* Plan Features List Visibility */
+ul li {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+}
+
+/* Navigation Links - making them crisp */
+.nav-link {
+  color: #c9d1d9 !important; /* Brighter grey than your current muted blue */
+  font-weight: 700 !important;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--accent) !important;
+  text-shadow: 0 0 10px rgba(0, 180, 255, 0.3);
+}
+
+/* Button Text Visibility */
+.btn-nav, .btn-primary {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.hero-title {
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 0, 0, 0.4);
+}
+
+.hero-sub {
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.2); /* Subtle dark backing for text over moving video */
+  backdrop-filter: blur(4px);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+}
+/* 1. DARKER VIDEO FILTER: Ensures white text doesn't wash out */
+#bgVideo {
+  filter: brightness(0.4) contrast(1.1); /* Darkened more for visibility */
+}
+
+/* 2. GLOWING TEXT SHADOW: Creates a "bright" pop effect on dark video */
+.hero-text-pop {
+  text-shadow: 
+    0 0 10px rgba(0, 180, 255, 0.5), /* Subtle accent glow */
+    0 4px 15px rgba(0, 0, 0, 1),    /* Hard black outline for legibility */
+    0 0 80px rgba(0, 0, 0, 0.4);   /* Wide depth shadow */
+}
+
+/* 3. UPDATED TYPEWRITER: Faster and smoother */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 4px solid #ff4d00; /* Bright orange cursor */
+  width: 0;
+  animation: typing 3s steps(30, end) forwards, blink 0.8s step-end infinite;
+}
+
+@keyframes typing { from { width: 0 } to { width: 100% } }
+@keyframes blink { from, to { border-color: transparent } 50% { border-color: #ff4d00 } }
+
+/* 4. BRIGHT CTA BUTTON */
+.btn-hot {
+  background: #ff4d00;
+  color: #ffffff !important;
+  font-weight: 800;
+  box-shadow: 0 0 20px rgba(255, 77, 0, 0.4);
+  transition: 0.3s;
+}
+.btn-hot:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+/* BLUE ACCENT BUTTON: Matches the #00b4ff "Athlete" text */
+.btn-athlete { 
+  background: var(--accent); /* #00b4ff */
+  color: #fff !important; 
+  padding: 1rem 2.5rem; 
+  border-radius: 12px; 
+  font-weight: 800; 
+  text-transform: uppercase; 
+  transition: 0.3s;
+  box-shadow: 0 0 20px rgba(0, 180, 255, 0.4); /* Blue glow */
+}
+.btn-athlete:hover { 
+  transform: translateY(-3px); 
+  filter: brightness(1.1); 
+  box-shadow: 0 0 30px rgba(0, 180, 255, 0.6);
+}
+/* 1. BRIGHTER VIDEO FILTER: Increased brightness while maintaining some contrast */
+#bgVideo {
+  filter: brightness(1.0) contrast(1.4) saturate(1.2); /* Bright but vivid */
+}
+
+/* 2. DYNAMIC OVERLAY: Subtle dark tint only at the top and bottom */
+.hero-vignette {
+  background: linear-gradient(to bottom, 
+    rgba(5,7,10,0.6) 0%, 
+    transparent 30%, 
+    transparent 70%, 
+    var(--bg-base) 100%);
+}
+
+/* 3. NEON SHADOW: Makes text "Pop" off a bright background */
+.hero-text-pop {
+  /* This creates a dark "halo" around text so it stays readable on bright frames */
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(0, 0, 0, 0.4);
+}
+
+/* 4. TYPEWRITER CURSOR: High visibility orange */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 4px solid #ff4d00;
+  width: 0;
+  animation: typing 3s steps(30, end) forwards, blink 0.8s step-end infinite;
+}
+
+@keyframes typing { from { width: 0 } to { width: 100% } }
+@keyframes blink { from, to { border-color: transparent } 50% { border-color: #ff4d00 } }
+
+
+/* Responsive Video Hero Adjustments */
+@media (max-width: 768px) {
+    /* Make video dark enough so text remains readable on mobile */
+    #bgVideo {
+        filter: brightness(0.4) contrast(1.1); 
+    }
+
+    /* Shrink the huge titles so they don't wrap ugly */
+    .brand-font.text-6xl.md\:text-9xl {
+        font-size: 3.5rem; /* Down from 6rem */
+        line-height: 1;
+    }
+
+    .hero-text-pop {
+        padding: 0 10px;
+    }
+
+    /* Ensure buttons stack neatly on small phones */
+    .video-hero-container .flex-col.md\:flex-row {
+        gap: 1rem;
+    }
+}
+
+/* Ensure the Glass cards don't look weird when stacked */
+@media (max-width: 640px) {
+    .glass-card {
+        padding: 1.5rem !important;
+    }
+}

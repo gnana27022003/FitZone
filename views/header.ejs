@@ -51,13 +51,8 @@
         }
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
 
-        /* ── VIDEO HERO ENGINE (Home Only) ── */
-        .video-hero-container { 
-            position: relative; height: 100vh; width: 100%; 
-            display: flex; align-items: center; justify-content: center; 
-            overflow: hidden; 
-        }
-       
+        
+        
         
 
         /* ── GLOBAL COMPONENTS ── */
@@ -75,6 +70,27 @@
 
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
+        /* Ensure all content has a standard max-width and is centered */
+.content-wrapper {
+  max-width: 1200px; /* Limits width so it doesn't stretch to screen edges */
+  margin: 0 auto;    /* Centers the block horizontally */
+  padding: 0 2rem;   /* Adds side-breathing room */
+}
+
+/* Unified spacing for the fixed navbar */
+.page-top-offset {
+  padding-top: 120px; /* Standardized space so content isn't under the nav */
+  min-height: 80vh;   /* Ensures content doesn't feel squashed vertically */
+}
+
+/* Footer Fix: Prevent text overflow */
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem; /* Balanced padding */
+  overflow: hidden;    /* Clips any stray elements */
+}
+
     </style>
 </head>
 <body>
@@ -84,45 +100,70 @@
 
 <nav id="navbar">
     <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <a href="/" class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-3 relative z-[1100]">
             <span class="text-2xl">⚡</span>
             <span class="brand-font text-2xl tracking-widest bg-gradient-to-r from-white to-accent bg-clip-text text-transparent">FITZONE</span>
         </a>
         
-        <div class="hidden lg:flex gap-10">
+        <button id="menu-toggle" class="lg:hidden relative z-[1100] p-2 text-white text-3xl">
+            <span id="menu-icon">☰</span>
+        </button>
+
+        <div id="nav-menu" class="fixed inset-0 bg-black/95 flex flex-col items-center justify-center gap-8 translate-x-full transition-transform duration-300 lg:static lg:bg-transparent lg:flex-row lg:translate-x-0 lg:gap-10 z-[1050]">
             <a href="/" class="nav-link <%= typeof page !== 'undefined' && page === 'home' ? 'active' : '' %>">Home</a>
             <a href="/locations" class="nav-link <%= typeof page !== 'undefined' && page === 'locations' ? 'active' : '' %>">Locations</a>
             <a href="/plans" class="nav-link <%= typeof page !== 'undefined' && page === 'plans' ? 'active' : '' %>">Plans</a>
-            <a href="/profile" class="nav-link <%= typeof page !== 'undefined' && page === 'profile' ? 'active' : '' %>">Dashboard</a>
+            
+            <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                <a href="/profile" class="nav-link <%= typeof page !== 'undefined' && page === 'profile' ? 'active' : '' %>">Dashboard</a>
+                <a href="/contact" class="nav-link <%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>">Contact Us</a>
+            <% } %>
+            
             <a href="/about" class="nav-link <%= typeof page !== 'undefined' && page === 'about' ? 'active' : '' %>">About Us</a>
-            <a href="/contact" class="nav-link <%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>">Contact Us</a>
 
+            <div class="flex lg:hidden flex-col gap-4 w-full px-12">
+                 <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                    <a href="/logout" class="btn-nav w-full text-center">Logout</a>
+                <% } else { %>
+                    <a href="/login" class="btn-nav w-full text-center">Login</a>
+                    <a href="/signup" class="btn-nav w-full text-center">Join Now</a>
+                <% } %>
+            </div>
         </div>
 
-        <div class="flex items-center gap-6">
-            <a href="/cart" class="text-xl hover:text-accent transition-colors relative">🛒</a>
-            <a href="/signup" class="btn-nav"><span>Join Now</span></a>
+        <div class="hidden lg:flex items-center gap-6">
+            <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                <a href="/profile" class="text-xl hover:text-accent transition-colors">👤</a>
+                <a href="/logout" class="btn-nav">Logout</a>
+            <% } else { %>
+                <a href="/login" class="btn-nav">Login</a>
+                <a href="/signup" class="btn-nav"><span>Join Now</span></a>
+            <% } %>
         </div>
     </div>
 </nav>
 
 <% if (typeof page !== 'undefined' && page === 'home') { %>
-
-<% } else { %>
-    <div class="pt-32"></div>
+    <% } else { %>
+    <div style="height: 100px;"></div> 
 <% } %>
 
 <script>
+  // Toggle Mobile Menu
+    const menuToggle = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const menuIcon = document.getElementById('menu-icon');
+
+    menuToggle.addEventListener('click', () => {
+        const isOpen = navMenu.classList.toggle('translate-x-0');
+        navMenu.classList.toggle('translate-x-full', !isOpen);
+        menuIcon.textContent = isOpen ? '✕' : '☰';
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto'; // Prevent scroll when menu open
+    });
+
     // Scroll state for navbar
     window.addEventListener('scroll', () => {
         document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
-
-    // Forced Video Playback (Autoplay fix)
-    window.addEventListener('load', () => {
-        const video = document.getElementById('bgVideo');
-        if (video) {
-            video.play().catch(err => console.error("Autoplay blocked. User interaction required."));
-        }
-    });
+   
 </script>

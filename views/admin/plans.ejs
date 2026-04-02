@@ -6,11 +6,16 @@
             <h1 class="brand-font text-6xl tracking-tight text-white uppercase">Plan Management</h1>
             <p class="text-muted text-sm tracking-wide uppercase">Configure Membership Tiers</p>
         </div>
-        <button class="btn-primary mt-2">
+        <button class="btn-action btn-edit" onclick="location.href='/admin/addPlan'">
             <span>+ Add New Tier</span>
         </button>
     </div>
-
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="glass-card">
+            <p class="text-xs text-muted condensed tracking-widest uppercase mb-2">Total Active Plans</p>
+            <h3 class="brand-font text-5xl text-accent"><%= planCount %></h3>
+        </div>
+    </div>
     <div class="admin-table-wrapper glass-card">
         <table class="admin-table">
             <thead>
@@ -22,17 +27,19 @@
                 </tr>
             </thead>
             <tbody>
+                <% plans.forEach(plan => { %>
                 <tr>
-                    <td class="font-bold text-white uppercase">Pro Membership</td>
-                    <td class="text-muted">₹1,799/mo</td>
-                    <td class="condensed text-accent">842</td>
+                    <td class="font-bold text-white uppercase"><%= plan.name %></td>
+                    <td class="text-muted">₹<%= plan.price %> / <%= plan.duration %> Days</td>
+                    <td class="condensed text-accent">--</td> 
                     <td class="text-right">
                         <div class="flex justify-end gap-4">
-                            <button class="btn-action btn-edit">Edit</button>
-                            <button class="btn-action btn-delete">Archive</button>
+                            <a href="/admin/editPlan/<%= plan._id %>" class="btn-action btn-edit">Edit</a>
+                            <a href="/admin/plans/delete/<%= plan._id %>" class="btn-action btn-delete" onclick="return confirm('Delete this plan?')">Delete</a>
                         </div>
                     </td>
                 </tr>
+                <% }) %>
             </tbody>
         </table>
     </div>

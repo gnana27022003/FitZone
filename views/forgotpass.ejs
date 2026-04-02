@@ -133,264 +133,167 @@
 
   </div><!-- /.page-wrap -->
 
-  <script>
-  /**
-   * ─────────────────────────────────────────────────────────────────
-   *  Fitzone — Forgot Password Frontend Logic
-   *
-   *  Flow:
-   *   1. User enters email → clicks Verify → OTP section slides down
-   *   2. User enters 6-digit code → clicks Confirm
-   *      ✅ Correct → OTP section hides, email field locks (verified border),
-   *                   Reset Password section slides in, card header updates
-   *      ❌ Wrong   → shake animation, "Invalid code" status shown
-   *   3. User sets new password → clicks Reset Password → success flash
-   *
-   *  Backend: Replace simulateBackend() with real fetch() calls to
-   *           POST /api/send-otp  and  POST /api/verify-otp
-   * ─────────────────────────────────────────────────────────────────
-   */
-
-  // ── State ──────────────────────────────────────────────────────────
+<script>
   const state = {
-    otpSent:   false,
-    verified:  false,
-    storedOtp: null,   // demo only — real backend holds this server-side
-  };
+    email: '',
+    verified: false
+};
 
-  // ── Simulated backend (replace with real fetch in production) ──────
-  async function simulateBackend(endpoint, payload) {
-    await new Promise(r => setTimeout(r, 900));
+// ── FIXED: Password Visibility Toggles ──────────────────────────
+// Logic to make the👁️/🙈 icons functional
+document.getElementById('newPassToggle').addEventListener('click', function () {
+    const input = document.getElementById('newPassword');
+    input.type = input.type === 'password' ? 'text' : 'password';
+    this.textContent = input.type === 'text' ? '👁️' : '🙈';
+});
 
-    if (endpoint === '/api/send-otp') {
-      const otp = String(Math.floor(100000 + Math.random() * 900000));
-      console.log(`[DEMO] OTP for ${payload.email}: ${otp}`);
-      return { success: true, otp };
-    }
-    if (endpoint === '/api/verify-otp') {
-      return { success: payload.code === state.storedOtp };
-    }
-    if (endpoint === '/api/reset-password') {
-      return { success: true };
-    }
-  }
+document.getElementById('confirmPassToggle').addEventListener('click', function () {
+    const input = document.getElementById('confirmPassword');
+    input.type = input.type === 'password' ? 'text' : 'password';
+    this.textContent = input.type === 'text' ? '👁️' : '🙈';
+});
 
-  // ── Step 1a : Send OTP ─────────────────────────────────────────────
-  async function sendOtp() {
-    const emailEl  = document.getElementById('email');
-    const btnEl    = document.getElementById('emailVerifyBtn');
-    const otpSec   = document.getElementById('emailOtpSection');
+// ── Step 1: Send OTP ─────────────────────────────────────────────
+async function sendOtp() {
+    const emailEl = document.getElementById('email');
+    const btnEl = document.getElementById('emailVerifyBtn');
     const statusEl = document.getElementById('emailStatus');
-    const errorEl  = document.getElementById('emailError');
-    const wrapEl   = document.getElementById('emailWrapper');
-
+    const errorEl = document.getElementById('emailError');
     const email = emailEl.value.trim();
 
-    // Validate email
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errorEl.textContent = 'Enter a valid email address';
-      return;
+        errorEl.textContent = 'Enter a valid email address';
+        return;
     }
     errorEl.textContent = '';
-
-    // Loading
     btnEl.disabled = true;
-    btnEl.textContent = '⏳';
+    btnEl.textContent = '...';
 
     try {
-      // ↓ Replace with: fetch('/api/send-otp', { method:'POST', body: JSON.stringify({email}) … })
-      const data = await simulateBackend('/api/send-otp', { email });
+        const res = await fetch('/generate-email-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, type: 'forgot' }) // ADDED TYPE HERE
+        });
+        const data = await res.json();
 
-      if (data.success) {
-        state.storedOtp = data.otp;   // demo only
-        state.otpSent   = true;
-
-        // Slide down OTP box
-        otpSec.classList.add('open');
-        setTimeout(() => document.getElementById('emailOtp').focus(), 380);
-
-        // Resend button
-        btnEl.textContent = 'Resend';
-        btnEl.disabled    = false;
-
-        // Clear old status
-        statusEl.className = 'verify-status';
-        statusEl.textContent = '';
-        wrapEl.classList.remove('verified', 'error');
-      }
+        if (res.ok) {
+            state.email = email;
+            document.getElementById('emailOtpSection').classList.add('open');
+            statusEl.className = 'verify-status show success';
+            statusEl.textContent = 'OTP Sent to ' + email;
+            btnEl.textContent = 'Resend';
+        } else {
+            errorEl.textContent = data.message;
+            btnEl.textContent = 'Verify';
+        }
     } catch (err) {
-      btnEl.textContent = 'Verify';
-      btnEl.disabled = false;
-      errorEl.textContent = 'Could not send OTP. Try again.';
+        errorEl.textContent = 'Server error. Try again.';
+    } finally {
+        btnEl.disabled = false;
     }
-  }
+}
 
-  // ── Step 1b : Verify OTP ───────────────────────────────────────────
-  async function verifyOtp() {
-    const otpInput    = document.getElementById('emailOtp');
-    const confirmBtn  = document.getElementById('otpConfirmBtn');
-    const statusEl    = document.getElementById('emailStatus');
-    const otpSec      = document.getElementById('emailOtpSection');
-    const wrapEl      = document.getElementById('emailWrapper');
-    const verifyBtn   = document.getElementById('emailVerifyBtn');
-
+// ── Step 2: Verify OTP ───────────────────────────────────────────
+async function verifyOtp() {
+    const otpInput = document.getElementById('emailOtp');
+    const confirmBtn = document.getElementById('otpConfirmBtn');
+    const statusEl = document.getElementById('emailStatus');
     const code = otpInput.value.trim();
-    if (code.length < 4) {
-      otpInput.style.animation = 'none';
-      otpInput.offsetHeight;
-      otpInput.style.animation = 'shake 0.4s ease';
-      return;
-    }
 
-    // Loading
     confirmBtn.disabled = true;
-    confirmBtn.textContent = '⏳';
+    confirmBtn.textContent = '...';
 
     try {
-      // ↓ Replace with: fetch('/api/verify-otp', { method:'POST', body: JSON.stringify({code}) … })
-      const data = await simulateBackend('/api/verify-otp', { code });
+        const res = await fetch('/verify-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: state.email, otp: code })
+        });
+        const data = await res.json();
 
-      if (data.success) {
-        // ── ✅ Verified ───────────────────────────────────────────────
-        state.verified = true;
-
-        // Status badge
-        statusEl.className   = 'verify-status show success';
-        statusEl.textContent = '✅ Email verified successfully';
-
-        // Close OTP box
-        otpSec.classList.remove('open');
-
-        // Green border, lock email field
-        wrapEl.classList.add('verified');
-        wrapEl.classList.remove('error');
-        document.getElementById('email').disabled = true;
-
-        // Lock verify button
-        verifyBtn.disabled     = true;
-        verifyBtn.textContent  = '✓';
-        verifyBtn.style.color  = 'var(--accent-green)';
-
-        // Update card header
-        document.getElementById('cardIcon').textContent    = '🔐';
-        document.getElementById('cardTitle').textContent   = 'Reset Your Password';
-        document.getElementById('cardSubtitle').textContent = 'Email verified! Choose a strong new password below.';
-
-        // Slide in reset password section after a short pause
-        setTimeout(() => {
-          document.getElementById('resetSection').classList.add('open');
-        }, 400);
-
-      } else {
-        // ── ❌ Wrong code ─────────────────────────────────────────────
-        state.verified = false;
-
-        statusEl.className   = 'verify-status show fail';
-        statusEl.textContent = '❌ Invalid code — please try again';
-
-        wrapEl.classList.add('error');
-        wrapEl.classList.remove('verified');
-
-        // Shake OTP input
-        otpInput.style.animation = 'none';
-        otpInput.offsetHeight;
-        otpInput.style.animation = 'shake 0.4s ease';
-
-        confirmBtn.disabled    = false;
+        if (res.ok) {
+            state.verified = true;
+            statusEl.className = 'verify-status show success';
+            statusEl.textContent = 'Email Verified ✅';
+            
+            document.getElementById('emailOtpSection').classList.remove('open');
+            document.getElementById('emailWrapper').classList.add('verified');
+            document.getElementById('email').disabled = true;
+            document.getElementById('emailVerifyBtn').disabled = true;
+            
+            setTimeout(() => {
+                document.getElementById('resetSection').classList.add('open');
+                document.getElementById('cardTitle').textContent = 'Set New Password';
+            }, 400);
+        } else {
+            statusEl.className = 'verify-status show fail';
+            statusEl.textContent = data.message;
+        }
+    } catch (err) {
+        statusEl.textContent = 'Verification failed.';
+    } finally {
+        confirmBtn.disabled = false;
         confirmBtn.textContent = 'Confirm';
-      }
-    } catch (err) {
-      confirmBtn.disabled    = false;
-      confirmBtn.textContent = 'Confirm';
     }
-  }
+}
 
-  // ── Step 2 : Reset Password ────────────────────────────────────────
-  async function resetPassword() {
-    const newPass     = document.getElementById('newPassword').value;
-    const confirmPass = document.getElementById('confirmPassword').value;
-    const newErr      = document.getElementById('newPassError');
-    const confirmErr  = document.getElementById('confirmPassError');
-    const btn         = document.getElementById('resetBtn');
-    let valid = true;
+// ── Step 3: Final Reset ──────────────────────────────────────────
+async function resetPassword() {
+    const password = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const btn = document.getElementById('resetBtn');
+    const errorEl = document.getElementById('confirmPassError');
+    const newPassErrorEl = document.getElementById('newPassError');
 
-    if (newPass.length < 8) {
-      newErr.textContent = 'Password must be at least 8 characters';
-      valid = false;
-    } else { newErr.textContent = ''; }
+    // Reset error messages
+    errorEl.textContent = '';
+    newPassErrorEl.textContent = '';
 
-    if (confirmPass !== newPass) {
-      confirmErr.textContent = 'Passwords do not match';
-      valid = false;
-    } else { confirmErr.textContent = ''; }
+    // Validation
+    if (password.length < 8) {
+        newPassErrorEl.textContent = 'Password must be at least 8 characters';
+        return;
+    }
+    
+    if (password !== confirm) {
+        errorEl.textContent = 'Passwords do not match';
+        return;
+    }
 
-    if (!valid) return;
-
-    // Loading
+    // UI Feedback
     btn.disabled = true;
-    btn.querySelector('span').textContent = '⏳ Resetting…';
+    btn.querySelector('span').textContent = 'Resetting...';
 
     try {
-      // ↓ Replace with: fetch('/api/reset-password', { method:'POST', body: JSON.stringify({password: newPass}) … })
-      const data = await simulateBackend('/api/reset-password', { password: newPass });
+        const res = await fetch('/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: state.email, password })
+        });
+        
+        const data = await res.json();
 
-      if (data.success) {
-        document.getElementById('successMessage').classList.add('show');
-        btn.querySelector('span').textContent = '✓ Password Reset!';
-        btn.style.background = 'linear-gradient(135deg, var(--accent-green), #00a854)';
-
-        // Redirect after delay
-        setTimeout(() => { alert('Demo: Redirecting to login…'); }, 2000);
-      }
+        if (res.ok) {
+            document.getElementById('successMessage').classList.add('show');
+            btn.style.background = 'var(--accent-green)';
+            btn.querySelector('span').textContent = 'Success!';
+            
+            // FIXED: Valid integer for setTimeout
+            setTimeout(() => { 
+                window.location.href = '/login'; 
+            }, 1000); 
+        } else {
+            errorEl.textContent = data.message;
+            btn.disabled = false;
+            btn.querySelector('span').textContent = 'Reset Password';
+        }
     } catch (err) {
-      btn.disabled = false;
-      btn.querySelector('span').textContent = '🔄 Reset Password';
+        errorEl.textContent = 'Error updating password.';
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Reset Password';
     }
-  }
-
-  // ── Password toggles ───────────────────────────────────────────────
-  document.getElementById('newPassToggle').addEventListener('click', function () {
-    const f = document.getElementById('newPassword');
-    const v = f.type === 'text';
-    f.type = v ? 'password' : 'text';
-    this.textContent = v ? '👁️' : '🙈';
-  });
-  document.getElementById('confirmPassToggle').addEventListener('click', function () {
-    const f = document.getElementById('confirmPassword');
-    const v = f.type === 'text';
-    f.type = v ? 'password' : 'text';
-    this.textContent = v ? '👁️' : '🙈';
-  });
-
-  // ── Password strength meter ────────────────────────────────────────
-  document.getElementById('newPassword').addEventListener('input', function () {
-    const val    = this.value;
-    const meter  = document.getElementById('strengthMeter');
-    const bar    = document.getElementById('strengthBar');
-    const label  = document.getElementById('strengthLabel');
-
-    if (!val) { meter.style.display = 'none'; return; }
-    meter.style.display = 'block';
-
-    let score = 0;
-    if (val.length >= 8)          score++;
-    if (/[A-Z]/.test(val))        score++;
-    if (/[0-9]/.test(val))        score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-
-    const levels = [
-      { pct: '20%',  color: '#ff3b3b', text: 'Weak' },
-      { pct: '45%',  color: '#ff9800', text: 'Fair' },
-      { pct: '70%',  color: '#f5d000', text: 'Good' },
-      { pct: '100%', color: 'var(--accent-green)', text: 'Strong 💪' },
-    ];
-    const lvl = levels[score - 1] || levels[0];
-    bar.style.width      = lvl.pct;
-    bar.style.background = lvl.color;
-    label.textContent    = lvl.text;
-    label.style.color    = lvl.color;
-  });
-  </script>
-
+}
+</script>
 </body>
 </html>

@@ -181,7 +181,38 @@ body {
 .section-header {
   margin-top: 4rem;
   margin-bottom: 3rem;
+
+
 }
+/* ── MODAL SYSTEM ── */
+.admin-modal {
+  position: fixed; inset: 0; z-index: 2000;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
+}
+.admin-modal.open { display: flex; animation: fadeIn 0.3s ease; }
+
+.form-container {
+  width: 100%; max-width: 500px;
+  padding: 2.5rem; position: relative;
+}
+
+.form-group { margin-bottom: 1.5rem; }
+.form-label {
+  display: block; font-size: 0.75rem; font-weight: 700;
+  color: var(--accent); margin-bottom: 0.5rem;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+
+/* Feature tags styling */
+.feature-input-wrap {
+  display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;
+}
+.feat-tag {
+  background: var(--accent); color: var(--bg-base);
+  padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 800;
+}
+
   </style>
   
 </head>
@@ -195,7 +226,7 @@ body {
             <span class="brand-font text-2xl tracking-widest text-accent">FZ ADMIN</span>
         </div>
         <div class="hidden lg:flex gap-6 condensed font-bold tracking-widest text-xs uppercase">
-            <a href="/admin" class="nav-link <%= page==='dashboard'?'active':'' %>">Dashboard</a>
+            <a href="/admin/dashboard" class="nav-link <%= page==='dashboard'?'active':'' %>">Dashboard</a>
             <a href="/admin/plans" class="nav-link <%= page==='plans'?'active':'' %>">Plans</a>
             <a href="/admin/locations" class="nav-link <%= page==='locations'?'active':'' %>">Locations</a>
             <a href="/admin/subscriptions" class="nav-link <%= page==='subs'?'active':'' %>">Subscribers</a>

@@ -84,13 +84,7 @@
 
       </form>
 
-      <div class="divider"><span>or continue with</span></div>
-
-      <div class="social-login">
-        <button class="social-button" title="Login with Google">🌐</button>
-        <button class="social-button" title="Login with Facebook">📘</button>
-        <button class="social-button" title="Login with Apple">🍎</button>
-      </div>
+      
 
       <div class="signup-link">
         New to Fitzone? <a href="/signup">Create an account</a>
@@ -108,42 +102,71 @@
   </div><!-- /.page-wrap -->
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
+  // Password Visibility Toggle Logic
+const passwordInput = document.getElementById('password');
+const toggleBtn = document.getElementById('passwordToggle');
 
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
+toggleBtn.addEventListener('click', () => {
+    // 1. Check current type and flip it
+    const isPassword = passwordInput.type === 'password';
+    passwordInput.type = isPassword ? 'text' : 'password';
 
-  const emailErr = document.getElementById('emailError');
-  const passwordErr = document.getElementById('passwordError');
-
-  emailErr.textContent = '';
-  passwordErr.textContent = '';
-
-  try {
-    const res = await fetch('/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (res.status === 200) {
-      // SUCCESS → redirect
-      window.location.href = '/home';
-    } else {
-      // ERROR → show under password
-      passwordErr.textContent = data.message;
-    }
-
-  } catch (err) {
-    passwordErr.textContent = 'Something went wrong. Try again.';
-  }
+    // 2. Change the icon to show user the state
+    toggleBtn.textContent = isPassword ? '🙈' : '👁️';
+    
+    // 3. Optional: Add a small glow effect when active
+    toggleBtn.style.color = isPassword ? '#00b4ff' : '#5e7a99';
 });
-</script>
+  // Inside login.ejs <script>
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-</body>
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('loginButton');
+    const emailErr = document.getElementById('emailError');
+    const passwordErr = document.getElementById('passwordError');
+
+    // Reset UI
+    emailErr.textContent = '';
+    passwordErr.textContent = '';
+    btn.disabled = true;
+    btn.querySelector('span').textContent = '⏳ Authenticating...';
+
+    try {
+        const res = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            // SHOW SUCCESS AND REDIRECT
+            document.getElementById('successMessage').classList.add('show');
+            btn.querySelector('span').textContent = '✅ Success!';
+            setTimeout(() => { window.location.href = '/'; }, 1000);
+        } else {
+            // SHOW ERROR IN STYLISH RED TEXT
+            passwordErr.textContent = data.message;
+            passwordErr.style.color = '#ff3b3b'; 
+            btn.disabled = false;
+            btn.querySelector('span').textContent = '🏃 Login to Fitzone';
+        }
+    } catch (err) {
+        passwordErr.textContent = 'Connection failed. Please try again.';
+        btn.disabled = false;
+        btn.querySelector('span').textContent = '🏃 Login to Fitzone';
+    }
+});
+
+// Clear error text when user starts typing again
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => {
+        document.getElementById('passwordError').textContent = '';
+    });
+});
+  </script>
+  </body>
 </html>

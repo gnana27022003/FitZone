@@ -1,0 +1,47 @@
+<%- include('header', { page: 'locations' }) %>
+
+<main class="admin-page-container min-h-[80vh] flex items-center justify-center">
+    <div class="glass-card w-full max-w-xl p-10 reveal visible">
+        <div class="mb-10 text-center">
+            <h1 class="brand-font text-5xl text-white tracking-wider uppercase">Edit Branch Details</h1>
+            <p class="text-muted text-xs uppercase tracking-widest mt-2">Updating location in <span class="text-accent"><%= location.areaName %></span></p>
+        </div>
+
+        <form action="/admin/locations/update/<%= location._id %>" method="POST" class="space-y-6">
+            <div class="form-group">
+                <label class="form-label">Branch / Area Name</label>
+                <input type="text" name="areaName" class="admin-input" value="<%= location.areaName %>" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Full Street Address</label>
+                <input type="text" name="address" class="admin-input" value="<%= location.address %>" required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" name="pincode" class="admin-input" value="<%= location.pincode %>" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <input type="text" name="state" class="admin-input" value="<%= location.state %>" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Country</label>
+                <input type="text" name="country" class="admin-input" value="<%= location.country %>" required>
+            </div>
+
+            <div class="pt-4 flex gap-4">
+                <a href="/admin/locations" class="btn-action btn-edit flex-1 text-center py-3 no-underline">Cancel</a>
+                <button type="submit" class="btn-action btn-edit flex-1 text-center py-3 no-underline">
+                    <span>💾 Sync Changes</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<%- include('footer') %>
